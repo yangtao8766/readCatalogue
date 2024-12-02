@@ -1,0 +1,22 @@
+{
+  "name": "read-catalogue",
+  "version": "1.0.15",
+  "description": "This is a tool that can read all the specified files in the directory",
+  "main": "./dist/commonjs/index.js",
+  "types": "./dist/commonjs/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "junminlaile <1322147900@qq.com>",
+  "license": "MIT",
+  "dependencies": {
+    "glob": "^10.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.6"
+  }
+}
