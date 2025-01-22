@@ -5,6 +5,7 @@ import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import babel from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";
+import polyfillNode from "rollup-plugin-polyfill-node";
 // @ts-ignore
 import clear from "rollup-plugin-clear";
 
@@ -63,7 +64,7 @@ const config: RollupOptions[] = [
     input: "src/index.ts",
     output: {
       dir: "dist",
-      entryFileNames: "es/chunk-[name]-[hash].esm.js",
+      entryFileNames: "esm/chunk-[name]-[hash].esm.js",
       format: "esm",
       sourcemap: true,
       globals: {
@@ -84,7 +85,7 @@ const config: RollupOptions[] = [
           strict: true,
           baseUrl: "/",
           declaration: true,
-          declarationDir: "./dist/es/",
+          declarationDir: "./dist/esm/",
         },
         exclude: ["node_modules/**", "rollup.config.ts"],
       }),
@@ -116,11 +117,12 @@ const config: RollupOptions[] = [
       name: "readCatalogue",
       sourcemap: true,
       globals: {
-        fs: "fs",
-        path: "path",
+        fs: "fs", // 映射 fs 模块到浏览器中的全局变量 'fs'
+        path: "path", // 映射 path 模块
         glob: "glob",
       },
     },
+    external: ["fs", "path"],
     plugins: [
       typescript({
         compilerOptions: {
@@ -138,6 +140,7 @@ const config: RollupOptions[] = [
         exclude: ["node_modules/**", "rollup.config.ts"],
       }),
       nodeResolve(),
+      polyfillNode(),
       commonjs(),
       babel({
         babelHelpers: "bundled",

@@ -11,5 +11,5 @@
     // "declaration": true,
     // "declarationDir": "./dist/types"
   },
-  "include": ["src/**/*", "rollup.config.ts"]
+  "include": ["src/**/*", "rollup.config.ts", "bin/cli.js"]
 }
