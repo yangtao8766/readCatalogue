@@ -40,6 +40,98 @@ typeof SuppressedError === "function" ? SuppressedError : function (error, suppr
     return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
+/**
+ * 一个文件对象
+ */
+class FileDir {
+  constructor(filename, name, ext, isFile, size, createTime, updateTime) {
+    this.filename = filename;
+    this.name = name;
+    this.ext = ext;
+    this.isFile = isFile;
+    this.size = size;
+    this.createTime = createTime;
+    this.updateTime = updateTime;
+    this.filename = filename;
+    this.name = name;
+    this.ext = ext;
+    this.isFile = isFile;
+    this.size = size;
+    this.createTime = createTime;
+    this.updateTime = updateTime;
+  }
+  getContent() {
+    return __awaiter(this, arguments, undefined, function () {
+      var _this = this;
+      let isBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      return function* () {
+        if (_this.isFile) {
+          if (isBuffer) {
+            return yield fs.promises.readFile(_this.filename);
+          } else {
+            return yield fs.promises.readFile(_this.filename, "utf-8");
+          }
+        }
+        return null;
+      }();
+    });
+  }
+  getChildren() {
+    return __awaiter(this, undefined, undefined, function* () {
+      if (this.isFile) {
+        //文件不可能有子文件
+        return [];
+      }
+      let children = yield fs.promises.readdir(this.filename);
+      children = children.map(name => {
+        const result = path$1.resolve(this.filename, name);
+        return FileDir.getFile(result);
+      });
+      return Promise.all(children);
+    });
+  }
+  static getFile(filename) {
+    return __awaiter(this, undefined, undefined, function* () {
+      const stat = yield fs.promises.stat(filename);
+      const name = path$1.basename(filename);
+      const ext = path$1.extname(filename);
+      const isFile = stat.isFile();
+      const size = stat.size;
+      const createTime = new Date(stat.birthtime);
+      const updateTime = new Date(stat.mtime);
+      return new FileDir(filename, name, ext, isFile, size, createTime, updateTime);
+    });
+  }
+}
+/**
+ * 创建文件对象
+ * @param mdContent
+ * @param filename
+ * @returns
+ */
+function createFile(mdContent, filename) {
+  return __awaiter(this, undefined, undefined, function* () {
+    const result = mdContent.map(item => __awaiter(this, undefined, undefined, function* () {
+      const filenameReadFileName = path$1.resolve(filename, path$1.relative(filename, item));
+      return yield FileDir.getFile(filenameReadFileName);
+    }));
+    const resultFile = yield Promise.all(result);
+    return resultFile;
+  });
+}
+/**
+ * 读取一个一个文件对象信息
+ */
+function readFile(file) {
+  return __awaiter(this, undefined, undefined, function* () {
+    const result = file.map(file => __awaiter(this, undefined, undefined, function* () {
+      return yield file.getContent();
+    }));
+    const resultText = yield Promise.allSettled(result);
+    return resultText;
+  });
+}
+
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
@@ -7833,112 +7925,13 @@ const glob = Object.assign(glob_, {
 });
 glob.glob = glob;
 
-var FileTypes;
-(function (FileTypes) {
-  FileTypes["MD"] = ".md";
-  FileTypes["JS"] = ".js";
-  FileTypes["TS"] = ".ts";
-  FileTypes["JSON"] = ".json";
-})(FileTypes || (FileTypes = {}));
 var PromiseStatus;
 (function (PromiseStatus) {
   PromiseStatus["PENDING"] = "pending";
   PromiseStatus["FULFILLED"] = "fulfilled";
   PromiseStatus["REJECTED"] = "rejected";
 })(PromiseStatus || (PromiseStatus = {}));
-let mdContent = [];
 let isSort = false;
-/**
- * 一个文件对象
- */
-class FileDir {
-  constructor(filename, name, ext, isFile, size, createTime, updateTime) {
-    this.filename = filename;
-    this.name = name;
-    this.ext = ext;
-    this.isFile = isFile;
-    this.size = size;
-    this.createTime = createTime;
-    this.updateTime = updateTime;
-    this.filename = filename;
-    this.name = name;
-    this.ext = ext;
-    this.isFile = isFile;
-    this.size = size;
-    this.createTime = createTime;
-    this.updateTime = updateTime;
-  }
-  getContent() {
-    return __awaiter(this, arguments, undefined, function () {
-      var _this = this;
-      let isBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      return function* () {
-        if (_this.isFile) {
-          if (isBuffer) {
-            return yield fs.promises.readFile(_this.filename);
-          } else {
-            return yield fs.promises.readFile(_this.filename, "utf-8");
-          }
-        }
-        return null;
-      }();
-    });
-  }
-  getChildren() {
-    return __awaiter(this, undefined, undefined, function* () {
-      if (this.isFile) {
-        //文件不可能有子文件
-        return [];
-      }
-      let children = yield fs.promises.readdir(this.filename);
-      children = children.map(name => {
-        const result = path$1.resolve(this.filename, name);
-        return FileDir.getFile(result);
-      });
-      return Promise.all(children);
-    });
-  }
-  static getFile(filename) {
-    return __awaiter(this, undefined, undefined, function* () {
-      const stat = yield fs.promises.stat(filename);
-      const name = path$1.basename(filename);
-      const ext = path$1.extname(filename);
-      const isFile = stat.isFile();
-      const size = stat.size;
-      const createTime = new Date(stat.birthtime);
-      const updateTime = new Date(stat.mtime);
-      return new FileDir(filename, name, ext, isFile, size, createTime, updateTime);
-    });
-  }
-}
-/**
- * 创建文件对象
- * @param mdContent
- * @param filename
- * @returns
- */
-function createFile(mdContent, filename) {
-  return __awaiter(this, undefined, undefined, function* () {
-    const result = mdContent.map(item => __awaiter(this, undefined, undefined, function* () {
-      const filenameReadFileName = path$1.resolve(filename, path$1.relative(filename, item));
-      return yield FileDir.getFile(filenameReadFileName);
-    }));
-    const resultFile = yield Promise.all(result);
-    return resultFile;
-  });
-}
-/**
- * 读取一个一个文件对象信息
- */
-function readFile(file) {
-  return __awaiter(this, undefined, undefined, function* () {
-    const result = file.map(file => __awaiter(this, undefined, undefined, function* () {
-      return yield file.getContent();
-    }));
-    const resultText = yield Promise.allSettled(result);
-    return resultText;
-  });
-}
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -7968,6 +7961,26 @@ function getFileAll(option, mdname) {
   });
 }
 /**
+ * 写入文件内容
+ * @param fileArray
+ */
+function writeFileAll(fileArray, writename) {
+  return __awaiter(this, undefined, undefined, function* () {
+    if (fileArray.length) {
+      let text = "";
+      fileArray.forEach(item => {
+        if (item.status === PromiseStatus.FULFILLED) {
+          text += item.value + "\r\n";
+        }
+      });
+      yield fs.promises.writeFile(writename, text);
+      console.log("write in  finish");
+    } else {
+      console.log("File not found");
+    }
+  });
+}
+/**
  * 对文件进行排序
  * @param mdContent
  */
@@ -7991,26 +8004,15 @@ function sortFile(mdContent) {
   });
   return isSort ? [...result, ...numberRes] : [...result];
 }
-/**
- * 写入文件内容
- * @param fileArray
- */
-function writeFileAll(fileArray, writename) {
-  return __awaiter(this, undefined, undefined, function* () {
-    if (fileArray.length) {
-      let text = "";
-      fileArray.forEach(item => {
-        if (item.status === PromiseStatus.FULFILLED) {
-          text += item.value + "\r\n";
-        }
-      });
-      yield fs.promises.writeFile(writename, text);
-      console.log("write in  finish");
-    } else {
-      console.log("File not found");
-    }
-  });
-}
+
+var FileTypes;
+(function (FileTypes) {
+  FileTypes["MD"] = ".md";
+  FileTypes["JS"] = ".js";
+  FileTypes["TS"] = ".ts";
+  FileTypes["JSON"] = ".json";
+})(FileTypes || (FileTypes = {}));
+let mdContent = [];
 // 获取当前目录下的所有文件和文件夹
 const readCatalogue = function (findPosition_1, writingPosition_1) {
   for (var _len = arguments.length, args_1 = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
@@ -8043,4 +8045,4 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
 };
 
 export { readCatalogue };
-//# sourceMappingURL=chunk-index-C2r2EKBx.esm.js.map
+//# sourceMappingURL=chunk-index-CrjcJuS8.esm.js.map
