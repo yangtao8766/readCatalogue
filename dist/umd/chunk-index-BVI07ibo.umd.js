@@ -10238,7 +10238,7 @@
             return;
           }
           const filename = findPosition;
-          const to = writingPosition;
+          const to = writingPosition.endsWith(options.ext) ? writingPosition : writingPosition + options.ext;
           let mdname = filename + "/**";
           const defaultOption = {
             regexp: options.exclude || null,
@@ -10259,4 +10259,4 @@
     exports.readCatalogue = readCatalogue;
 
 }));
-//# sourceMappingURL=chunk-index-DYRZdpb3.umd.js.map
+//# sourceMappingURL=chunk-index-BVI07ibo.umd.js.map

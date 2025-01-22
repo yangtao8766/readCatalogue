@@ -2,23 +2,22 @@
   "name": "read-catalogue",
   "version": "1.0.15",
   "description": "This is a tool that can read all the specified files in the directory",
-  "main": "dist/common/chunk-index-BwqUb-9T.cjs",
-  "module": "dist/es/chunk-index-y9rQ1cfI.esm.js",
-  "browser": "dist/umd/chunk-index-Bto6ki2c.umd.js",
-  "types": "dist/types/index.d.ts",
+  "main": "dist/common/chunk-index-CTD2gtwT.cjs",
+  "module": "dist/esm/chunk-index-C2r2EKBx.esm.js",
+  "browser": "dist/umd/chunk-index-BVI07ibo.umd.js",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/es/index.d.ts",
-        "default": "./dist/es/chunk-index-y9rQ1cfI.esm.js"
+        "default": "./dist/esm/chunk-index-C2r2EKBx.esm.js"
       },
       "require": {
         "types": "./dist/common/index.d.ts",
-        "default": "./dist/common/chunk-index-BwqUb-9T.cjs"
+        "default": "./dist/common/chunk-index-CTD2gtwT.cjs"
       },
       "default": {
         "types": "./dist/umd/index.d.ts",
-        "default": "./dist/umd/chunk-index-Bto6ki2c.umd.js"
+        "default": "./dist/umd/chunk-index-BVI07ibo.umd.js"
       }
     }
   },
@@ -27,7 +26,7 @@
   ],
   "scripts": {
     "build:types": "tsc",
-    "build": "rollup -c rollup.config.ts --configPlugin typescript -w"
+    "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./script/replacePackage.js"
   },
   "bin": {
     "readCatalogue": "bin/cli.js"

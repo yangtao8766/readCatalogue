@@ -47,9 +47,7 @@ type ReadCatalogueType = (
 ) => Promise<any>;
 
 let mdContent: string[] = [];
-
 let isSort: boolean = false;
-
 interface FileFunction {
   getContent: (isBuffer: boolean) => Promise<any>;
   getChildren: () => Promise<any[]>;
@@ -236,7 +234,9 @@ export const readCatalogue: ReadCatalogueType = async (
     return;
   }
   const filename = findPosition;
-  const to = writingPosition;
+  const to = writingPosition.endsWith(options.ext as string)
+    ? writingPosition
+    : writingPosition + options.ext;
   let mdname = filename + "/**";
 
   const defaultOption: DefaultOption = {

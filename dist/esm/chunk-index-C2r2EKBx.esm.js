@@ -8024,7 +8024,7 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
         return;
       }
       const filename = findPosition;
-      const to = writingPosition;
+      const to = writingPosition.endsWith(options.ext) ? writingPosition : writingPosition + options.ext;
       let mdname = filename + "/**";
       const defaultOption = {
         regexp: options.exclude || null,
@@ -8043,4 +8043,4 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
 };
 
 export { readCatalogue };
-//# sourceMappingURL=chunk-index-DLhcLGtz.esm.js.map
+//# sourceMappingURL=chunk-index-C2r2EKBx.esm.js.map

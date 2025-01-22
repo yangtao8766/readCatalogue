@@ -8045,7 +8045,7 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
         return;
       }
       const filename = findPosition;
-      const to = writingPosition;
+      const to = writingPosition.endsWith(options.ext) ? writingPosition : writingPosition + options.ext;
       let mdname = filename + "/**";
       const defaultOption = {
         regexp: options.exclude || null,
@@ -8064,4 +8064,4 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
 };
 
 exports.readCatalogue = readCatalogue;
-//# sourceMappingURL=chunk-index-DgiliWLY.cjs.map
+//# sourceMappingURL=chunk-index-CTD2gtwT.cjs.map
