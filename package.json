@@ -27,7 +27,7 @@
   ],
   "scripts": {
     "build:types": "tsc",
-    "build": "rollup -c rollup.config.ts --configPlugin typescript -w"
+    "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./script/replacePackage.js"
   },
   "keywords": [],
   "author": "junminlaile <1322147900@qq.com>",
