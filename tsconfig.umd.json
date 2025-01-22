@@ -6,10 +6,11 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "strict": true
-    // "baseUrl": "/",
-    // "declaration": true,
-    // "declarationDir": "./dist/types"
+    "strict": true,
+    "baseUrl": "/",
+    "declaration": true,
+    "declarationDir": "./dist/umd"
   },
-  "include": ["src/**/*", "rollup.config.ts"]
+  // "include": ["src/**/*", "rollup.config.ts"]
+  "exclude": ["node_modules", "rollup.config.ts"]
 }

@@ -1,13 +1,16 @@
 import { RollupOptions } from "rollup";
-import { nodeResolve } from "@rollup/plugin-node-resolve";
+import resolve from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
+import typescript2 from "rollup-plugin-typescript2";
 import typescript from "@rollup/plugin-typescript";
 import terser from "@rollup/plugin-terser";
 import babel from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";
 import polyfillNode from "rollup-plugin-polyfill-node";
+import json from "@rollup/plugin-json";
 // @ts-ignore
 import clear from "rollup-plugin-clear";
+const extensions = [".js", ".ts"];
 
 const config: RollupOptions[] = [
   {
@@ -37,11 +40,15 @@ const config: RollupOptions[] = [
           strict: true,
           baseUrl: "/",
           declaration: true,
-          declarationDir: "./dist/common/",
+          declarationDir: "dist/common",
         },
         exclude: ["node_modules/**", "rollup.config.ts"],
       }),
-      nodeResolve(),
+      // typescript2({
+      //   tsconfig: "./tsconfig.cjs.json",
+      //   useTsconfigDeclarationDir: true,
+      // }),
+      resolve({ extensions }),
       commonjs(),
       babel({
         babelHelpers: "bundled",
@@ -58,6 +65,7 @@ const config: RollupOptions[] = [
       clear({
         targets: ["dist"],
       }),
+      json(),
     ],
   },
   {
@@ -74,22 +82,26 @@ const config: RollupOptions[] = [
       },
     },
     plugins: [
-      typescript({
-        compilerOptions: {
-          target: "ES2015",
-          module: "ESNext",
-          moduleResolution: "Bundler",
-          esModuleInterop: true,
-          allowSyntheticDefaultImports: true,
-          forceConsistentCasingInFileNames: true,
-          strict: true,
-          baseUrl: "/",
-          declaration: true,
-          declarationDir: "./dist/esm/",
-        },
-        exclude: ["node_modules/**", "rollup.config.ts"],
+      // typescript({
+      //   compilerOptions: {
+      //     target: "ES2015",
+      //     module: "ESNext",
+      //     moduleResolution: "Bundler",
+      //     esModuleInterop: true,
+      //     allowSyntheticDefaultImports: true,
+      //     forceConsistentCasingInFileNames: true,
+      //     strict: true,
+      //     baseUrl: "/",
+      //     declaration: true,
+      //     declarationDir: "./dist/esm/",
+      //   },
+      //   exclude: ["node_modules/**", "rollup.config.ts"],
+      // }),
+      typescript2({
+        tsconfig: "./tsconfig.esm.json",
+        useTsconfigDeclarationDir: true,
       }),
-      nodeResolve(),
+      resolve({ extensions }),
       commonjs(),
       babel({
         babelHelpers: "bundled",
@@ -106,6 +118,7 @@ const config: RollupOptions[] = [
       clear({
         targets: ["dist"],
       }),
+      json(),
     ],
   },
   {
@@ -124,22 +137,26 @@ const config: RollupOptions[] = [
     },
     external: ["fs", "path"],
     plugins: [
-      typescript({
-        compilerOptions: {
-          target: "ES2015",
-          module: "ESNext",
-          moduleResolution: "Bundler",
-          esModuleInterop: true,
-          allowSyntheticDefaultImports: true,
-          forceConsistentCasingInFileNames: true,
-          strict: true,
-          baseUrl: "/",
-          declaration: true,
-          declarationDir: "./dist/umd/",
-        },
-        exclude: ["node_modules/**", "rollup.config.ts"],
+      // typescript({
+      //   compilerOptions: {
+      //     target: "ES2015",
+      //     module: "ESNext",
+      //     moduleResolution: "Bundler",
+      //     esModuleInterop: true,
+      //     allowSyntheticDefaultImports: true,
+      //     forceConsistentCasingInFileNames: true,
+      //     strict: true,
+      //     baseUrl: "/",
+      //     declaration: true,
+      //     declarationDir: "./dist/umd/",
+      //   },
+      //   exclude: ["node_modules/**", "rollup.config.ts"],
+      // }),
+      typescript2({
+        tsconfig: "./tsconfig.umd.json",
+        useTsconfigDeclarationDir: true,
       }),
-      nodeResolve(),
+      resolve({ extensions }),
       polyfillNode(),
       commonjs(),
       babel({
@@ -157,6 +174,7 @@ const config: RollupOptions[] = [
       clear({
         targets: ["dist"],
       }),
+      json(),
     ],
   },
 ];
