@@ -3,9 +3,9 @@ const path = require("path");
 const { glob } = require("glob");
 
 const replaceArray = ["main", "module", "browser", "exports"];
-const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9]+(?:\.cjs)/;
-const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9]+(?:\.esm\.js)/;
-const browserReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9]+(?:\.umd\.js)/;
+const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.cjs)/;
+const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.esm\.js)/;
+const browserReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.umd\.js)/;
 function exportsReplace(exports, files) {
   for (const key in exports) {
     switch (key) {
