@@ -6,6 +6,7 @@ const replaceArray = ["main", "module", "browser", "exports"];
 const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.cjs)/;
 const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.esm\.js)/;
 const browserReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.umd\.js)/;
+const requireReagex = /require\(["']([^"']+)["']\)/;
 function exportsReplace(exports, files) {
   for (const key in exports) {
     switch (key) {
@@ -97,4 +98,19 @@ async function serachScript() {
   }
 }
 
-serachScript();
+async function replaceBin() {
+  let file = await glob("dist/**/*.cjs");
+  file = file.map((item) => item.replace(/\\/g, "/"));
+  const binPath = path.resolve(__dirname, "../bin/cli.js");
+  let sourece = await fs.promises.readFile(binPath, "utf-8");
+  sourece = sourece.replace(requireReagex, `require('../${file[0]}')`);
+  await fs.promises.writeFile(binPath, sourece, "utf-8");
+  console.log("bin replace success");
+}
+
+async function main() {
+  serachScript();
+  replaceBin();
+}
+
+main();

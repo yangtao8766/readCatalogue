@@ -1,29 +1,31 @@
 import { glob } from "glob";
 import fs from "fs";
+import path from "path";
+import { PromiseStatus } from "../enum/index";
+import type { DefaultOption, ImageDefaultOption } from "../types/index";
 
-type TypeFileTypes = {
-  MD: ".md";
-  JS: ".js";
-  TS: ".ts";
-  JSON: ".json";
-};
-
-type FileTypesExt = TypeFileTypes[keyof TypeFileTypes];
-
-type DefaultOption = {
-  regexp: RegExp | null;
-  ext: FileTypesExt;
-  sort: boolean;
-  hierarchy: number;
-  overlookFile: string;
-};
-
-enum PromiseStatus {
-  PENDING = "pending",
-  FULFILLED = "fulfilled",
-  REJECTED = "rejected",
-}
 let isSort: boolean = false;
+
+// 提取文件名并去除重复项
+function extractFileName(filePath: string) {
+  return path.basename(filePath);
+}
+
+function removeDuplicateFilesByFileName(filePaths: string[]) {
+  const fileNames = new Set();
+  const uniqueFilePaths = [];
+
+  for (const filePath of filePaths) {
+    const fileName = extractFileName(filePath);
+    if (!fileNames.has(fileName)) {
+      fileNames.add(fileName);
+      uniqueFilePaths.push(filePath);
+    }
+  }
+
+  return uniqueFilePaths;
+}
+
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -32,23 +34,36 @@ let isSort: boolean = false;
 export async function getFileAll(
   option: DefaultOption,
   mdname: string
-): Promise<string[]> {
+): Promise<any[]> {
   let md = [];
-  let result: string[] = [];
+  let result = [];
   for (let i = 0; i < option.hierarchy; i++) {
-    md = await glob(`${mdname}${option.ext}`, {
-      ignore: {
-        ignored: (p: any) => Boolean(option.regexp?.test(p.name)),
-        childrenIgnored: (p: any) => p.isNamed(option.overlookFile),
-      },
-      stat: option.sort,
-    });
+    result.push(
+      await glob(`${mdname}${option.ext}`, {
+        ignore: {
+          ignored: (p: any) => Boolean(option.regexp?.test(p.name)),
+          childrenIgnored: (p: any) => p.isNamed(option.overlookFile),
+        },
+        stat: option.sort,
+      })
+    );
     mdname += "/**";
-    result.push(...([...new Set(md)] as any));
   }
+  result = result.flat();
   result = [...new Set(result)];
   result = result.sort();
+  result = removeDuplicateFilesByFileName(result);
+  return result;
+}
 
+export async function getImageFile(option: ImageDefaultOption, path: string) {
+  let result = [];
+  for (let i = 0; i < option.ext?.length; i++) {
+    result.push(await glob(path + `/*${option.ext[i]}`));
+    path += "/**";
+  }
+  result = result.flat();
+  result = [...new Set(result)];
   return result;
 }
 
@@ -60,18 +75,15 @@ export async function writeFileAll(
   fileArray: PromiseSettledResult<any>[],
   writename: string
 ) {
-  if (fileArray.length) {
-    let text = "";
-    fileArray.forEach((item) => {
-      if (item.status === PromiseStatus.FULFILLED) {
-        text += item.value + "\r\n";
-      }
-    });
-    await fs.promises.writeFile(writename, text);
-    console.log("write in  finish");
-  } else {
-    console.log("File not found");
-  }
+  if (!fileArray.length) return console.error("File not found");
+  let text = "";
+  fileArray.forEach((item) => {
+    if (item.status === PromiseStatus.FULFILLED) {
+      text += item.value + "\r\n";
+    }
+  });
+  await fs.promises.writeFile(writename, text);
+  console.log("write in  finish");
 }
 
 /**
@@ -98,4 +110,17 @@ export function sortFile(mdContent: string[]) {
     }
   });
   return (resultAll = isSort ? [...result, ...numberRes] : [...result]);
+}
+/**
+ * 检查文件是否存在
+ * @param path 文件路径
+ * @returns
+ */
+export async function checkFileExists(path: string): Promise<boolean> {
+  try {
+    await fs.promises.access(path, fs.constants.F_OK);
+    return true;
+  } catch (err) {
+    return false;
+  }
 }

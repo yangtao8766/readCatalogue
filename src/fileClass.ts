@@ -1,11 +1,6 @@
 import fs from "fs";
 import path from "path";
-
-
-interface FileFunction {
-  getContent: (isBuffer: boolean) => Promise<any>;
-  getChildren: () => Promise<any[]>;
-}
+import type { FileFunction } from "./types/index";
 
 /**
  * 一个文件对象
@@ -38,6 +33,13 @@ export class FileDir implements FileFunction {
       }
     }
     return null;
+  }
+
+  async copyImageFiles(files: FileDir, writeIamagePath: string) {
+    await fs.promises.copyFile(
+      files.filename,
+      writeIamagePath + "/" + files.name
+    );
   }
 
   async getChildren() {
@@ -79,13 +81,9 @@ export class FileDir implements FileFunction {
  * @param filename
  * @returns
  */
-export async function createFile(mdContent: string[], filename: string) {
+export async function createFile(mdContent: string[]) {
   const result = mdContent.map(async (item: string) => {
-    const filenameReadFileName = path.resolve(
-      filename,
-      path.relative(filename, item)
-    );
-    return await FileDir.getFile(filenameReadFileName);
+    return await FileDir.getFile(item);
   });
   const resultFile = await Promise.all(result);
   return resultFile;
@@ -98,6 +96,7 @@ export async function readFile(file: FileDir[]) {
   const result = file.map(async (file) => {
     return await file.getContent();
   });
+
   const resultText = await Promise.allSettled(result);
 
   return resultText;

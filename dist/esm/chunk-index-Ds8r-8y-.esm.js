@@ -1,33 +1,12 @@
-'use strict';
-
-var fs = require('fs');
-var path$1 = require('path');
-var node_url = require('node:url');
-var node_path = require('node:path');
-var actualFS = require('node:fs');
-var promises = require('node:fs/promises');
-var node_events = require('node:events');
-var Stream = require('node:stream');
-var node_string_decoder = require('node:string_decoder');
-
-function _interopNamespaceDefault(e) {
-    var n = Object.create(null);
-    if (e) {
-        Object.keys(e).forEach(function (k) {
-            if (k !== 'default') {
-                var d = Object.getOwnPropertyDescriptor(e, k);
-                Object.defineProperty(n, k, d.get ? d : {
-                    enumerable: true,
-                    get: function () { return e[k]; }
-                });
-            }
-        });
-    }
-    n.default = e;
-    return Object.freeze(n);
-}
-
-var actualFS__namespace = /*#__PURE__*/_interopNamespaceDefault(actualFS);
+import fs, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync } from 'fs';
+import path$1 from 'path';
+import { fileURLToPath } from 'node:url';
+import { win32, posix } from 'node:path';
+import * as actualFS from 'node:fs';
+import { lstat, readdir as readdir$1, readlink, realpath } from 'node:fs/promises';
+import { EventEmitter } from 'node:events';
+import Stream from 'node:stream';
+import { StringDecoder } from 'node:string_decoder';
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -97,6 +76,11 @@ class FileDir {
       }();
     });
   }
+  copyImageFiles(files, writeIamagePath) {
+    return __awaiter(this, undefined, undefined, function* () {
+      yield fs.promises.copyFile(files.filename, writeIamagePath + "/" + files.name);
+    });
+  }
   getChildren() {
     return __awaiter(this, undefined, undefined, function* () {
       if (this.isFile) {
@@ -130,11 +114,10 @@ class FileDir {
  * @param filename
  * @returns
  */
-function createFile(mdContent, filename) {
+function createFile(mdContent) {
   return __awaiter(this, undefined, undefined, function* () {
     const result = mdContent.map(item => __awaiter(this, undefined, undefined, function* () {
-      const filenameReadFileName = path$1.resolve(filename, path$1.relative(filename, item));
-      return yield FileDir.getFile(filenameReadFileName);
+      return yield FileDir.getFile(item);
     }));
     const resultFile = yield Promise.all(result);
     return resultFile;
@@ -3676,7 +3659,7 @@ const isStream = (s) => !!s &&
  */
 const isReadable = (s) => !!s &&
     typeof s === 'object' &&
-    s instanceof node_events.EventEmitter &&
+    s instanceof EventEmitter &&
     typeof s.pipe === 'function' &&
     // node core Writable streams have a pipe() method, but it throws
     s.pipe !== Stream.Writable.prototype.pipe;
@@ -3685,7 +3668,7 @@ const isReadable = (s) => !!s &&
  */
 const isWritable = (s) => !!s &&
     typeof s === 'object' &&
-    s instanceof node_events.EventEmitter &&
+    s instanceof EventEmitter &&
     typeof s.write === 'function' &&
     typeof s.end === 'function';
 const EOF = Symbol('EOF');
@@ -3791,7 +3774,7 @@ const isEncodingOptions = (o) => !o.objectMode && !!o.encoding && o.encoding !==
  * `Events` is the set of event handler signatures that this object
  * will emit, see {@link Minipass.Events}
  */
-class Minipass extends node_events.EventEmitter {
+class Minipass extends EventEmitter {
     [FLOWING] = false;
     [PAUSED] = false;
     [PIPES] = [];
@@ -3846,7 +3829,7 @@ class Minipass extends node_events.EventEmitter {
         }
         this[ASYNC] = !!options.async;
         this[DECODER] = this[ENCODING]
-            ? new node_string_decoder.StringDecoder(this[ENCODING])
+            ? new StringDecoder(this[ENCODING])
             : null;
         //@ts-ignore - private option for debugging and testing
         if (options && options.debugExposeBuffer === true) {
@@ -4670,22 +4653,22 @@ class Minipass extends node_events.EventEmitter {
     }
 }
 
-const realpathSync = fs.realpathSync.native;
+const realpathSync = realpathSync$1.native;
 const defaultFS = {
-    lstatSync: fs.lstatSync,
-    readdir: fs.readdir,
-    readdirSync: fs.readdirSync,
-    readlinkSync: fs.readlinkSync,
+    lstatSync,
+    readdir: readdir,
+    readdirSync,
+    readlinkSync,
     realpathSync,
     promises: {
-        lstat: promises.lstat,
-        readdir: promises.readdir,
-        readlink: promises.readlink,
-        realpath: promises.realpath,
+        lstat,
+        readdir: readdir$1,
+        readlink,
+        realpath,
     },
 };
 // if they just gave us require('fs') then use our default
-const fsFromOption = (fsOption) => !fsOption || fsOption === defaultFS || fsOption === actualFS__namespace ?
+const fsFromOption = (fsOption) => !fsOption || fsOption === defaultFS || fsOption === actualFS ?
     defaultFS
     : {
         ...defaultFS,
@@ -5838,7 +5821,7 @@ class PathWin32 extends PathBase {
      * @internal
      */
     getRootString(path) {
-        return node_path.win32.parse(path).root;
+        return win32.parse(path).root;
     }
     /**
      * @internal
@@ -5958,7 +5941,7 @@ class PathScurryBase {
     constructor(cwd = process.cwd(), pathImpl, sep, { nocase, childrenCacheSize = 16 * 1024, fs = defaultFS, } = {}) {
         this.#fs = fsFromOption(fs);
         if (cwd instanceof URL || cwd.startsWith('file://')) {
-            cwd = node_url.fileURLToPath(cwd);
+            cwd = fileURLToPath(cwd);
         }
         // resolve and split root, and then add to the store.
         // this is the only time we call path.resolve()
@@ -6546,7 +6529,7 @@ class PathScurryWin32 extends PathScurryBase {
     sep = '\\';
     constructor(cwd = process.cwd(), opts = {}) {
         const { nocase = true } = opts;
-        super(cwd, node_path.win32, '\\', { ...opts, nocase });
+        super(cwd, win32, '\\', { ...opts, nocase });
         this.nocase = nocase;
         for (let p = this.cwd; p; p = p.parent) {
             p.nocase = this.nocase;
@@ -6559,7 +6542,7 @@ class PathScurryWin32 extends PathScurryBase {
         // if the path starts with a single separator, it's not a UNC, and we'll
         // just get separator as the root, and driveFromUNC will return \
         // In that case, mount \ on the root from the cwd.
-        return node_path.win32.parse(dir).root.toUpperCase();
+        return win32.parse(dir).root.toUpperCase();
     }
     /**
      * @internal
@@ -6588,7 +6571,7 @@ class PathScurryPosix extends PathScurryBase {
     sep = '/';
     constructor(cwd = process.cwd(), opts = {}) {
         const { nocase = false } = opts;
-        super(cwd, node_path.posix, '/', { ...opts, nocase });
+        super(cwd, posix, '/', { ...opts, nocase });
         this.nocase = nocase;
     }
     /**
@@ -7710,7 +7693,7 @@ class Glob {
             this.cwd = '';
         }
         else if (opts.cwd instanceof URL || opts.cwd.startsWith('file://')) {
-            opts.cwd = node_url.fileURLToPath(opts.cwd);
+            opts.cwd = fileURLToPath(opts.cwd);
         }
         this.cwd = opts.cwd || '';
         this.root = opts.root;
@@ -7946,13 +7929,45 @@ const glob = Object.assign(glob_, {
 });
 glob.glob = glob;
 
+var EnumFileTypes;
+(function (EnumFileTypes) {
+  EnumFileTypes["MD"] = ".md";
+  EnumFileTypes["JS"] = ".js";
+  EnumFileTypes["TS"] = ".ts";
+  EnumFileTypes["JSON"] = ".json";
+})(EnumFileTypes || (EnumFileTypes = {}));
 var PromiseStatus;
 (function (PromiseStatus) {
   PromiseStatus["PENDING"] = "pending";
   PromiseStatus["FULFILLED"] = "fulfilled";
   PromiseStatus["REJECTED"] = "rejected";
 })(PromiseStatus || (PromiseStatus = {}));
-let isSort = false;
+var EnumFileImageExt;
+(function (EnumFileImageExt) {
+  EnumFileImageExt["PNG"] = ".png";
+  EnumFileImageExt["JPG"] = ".jpg";
+  EnumFileImageExt["JPEG"] = ".jpeg";
+  EnumFileImageExt["SVG"] = ".svg";
+  EnumFileImageExt["GIF"] = ".gif";
+  EnumFileImageExt["WEBP"] = ".webp";
+})(EnumFileImageExt || (EnumFileImageExt = {}));
+
+// 提取文件名并去除重复项
+function extractFileName(filePath) {
+  return path$1.basename(filePath);
+}
+function removeDuplicateFilesByFileName(filePaths) {
+  const fileNames = new Set();
+  const uniqueFilePaths = [];
+  for (const filePath of filePaths) {
+    const fileName = extractFileName(filePath);
+    if (!fileNames.has(fileName)) {
+      fileNames.add(fileName);
+      uniqueFilePaths.push(filePath);
+    }
+  }
+  return uniqueFilePaths;
+}
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -7960,10 +7975,9 @@ let isSort = false;
  */
 function getFileAll(option, mdname) {
   return __awaiter(this, undefined, undefined, function* () {
-    let md = [];
     let result = [];
     for (let i = 0; i < option.hierarchy; i++) {
-      md = yield glob(`${mdname}${option.ext}`, {
+      result.push(yield glob(`${mdname}${option.ext}`, {
         ignore: {
           ignored: p => {
             var _a;
@@ -7972,12 +7986,26 @@ function getFileAll(option, mdname) {
           childrenIgnored: p => p.isNamed(option.overlookFile)
         },
         stat: option.sort
-      });
+      }));
       mdname += "/**";
-      result.push(...[...new Set(md)]);
     }
+    result = result.flat();
     result = [...new Set(result)];
     result = result.sort();
+    result = removeDuplicateFilesByFileName(result);
+    return result;
+  });
+}
+function getImageFile(option, path) {
+  return __awaiter(this, undefined, undefined, function* () {
+    var _a;
+    let result = [];
+    for (let i = 0; i < ((_a = option.ext) === null || _a === undefined ? undefined : _a.length); i++) {
+      result.push(yield glob(path + `/*${option.ext[i]}`));
+      path += "/**";
+    }
+    result = result.flat();
+    result = [...new Set(result)];
     return result;
   });
 }
@@ -7987,53 +8015,35 @@ function getFileAll(option, mdname) {
  */
 function writeFileAll(fileArray, writename) {
   return __awaiter(this, undefined, undefined, function* () {
-    if (fileArray.length) {
-      let text = "";
-      fileArray.forEach(item => {
-        if (item.status === PromiseStatus.FULFILLED) {
-          text += item.value + "\r\n";
-        }
-      });
-      yield fs.promises.writeFile(writename, text);
-      console.log("write in  finish");
-    } else {
-      console.log("File not found");
-    }
+    if (!fileArray.length) return console.error("File not found");
+    let text = "";
+    fileArray.forEach(item => {
+      if (item.status === PromiseStatus.FULFILLED) {
+        text += item.value + "\r\n";
+      }
+    });
+    yield fs.promises.writeFile(writename, text);
+    console.log("write in  finish");
   });
 }
 /**
- * 对文件进行排序
- * @param mdContent
+ * 检查文件是否存在
+ * @param path 文件路径
+ * @returns
  */
-function sortFile(mdContent) {
-  const result = [];
-  const numberRes = [];
-  mdContent.forEach(item => {
-    var _a;
-    const number = (_a = item.match(/\d+/g)) === null || _a === undefined ? undefined : _a[0];
-    if (number) {
-      if (~~number >= 10) {
-        isSort = true;
-        numberRes.push(item);
-      } else {
-        isSort = false;
-        result.push(item);
-      }
-    } else {
-      numberRes.push(item);
+function checkFileExists(path) {
+  return __awaiter(this, undefined, undefined, function* () {
+    try {
+      yield fs.promises.access(path, fs.constants.F_OK);
+      return true;
+    } catch (err) {
+      return false;
     }
   });
-  return isSort ? [...result, ...numberRes] : [...result];
 }
 
-var FileTypes;
-(function (FileTypes) {
-  FileTypes["MD"] = ".md";
-  FileTypes["JS"] = ".js";
-  FileTypes["TS"] = ".ts";
-  FileTypes["JSON"] = ".json";
-})(FileTypes || (FileTypes = {}));
 let mdContent = [];
+const enumImageArr = [EnumFileImageExt.PNG, EnumFileImageExt.JPG, EnumFileImageExt.JPEG, EnumFileImageExt.GIF, EnumFileImageExt.SVG, EnumFileImageExt.WEBP];
 // 获取当前目录下的所有文件和文件夹
 const readCatalogue = function (findPosition_1, writingPosition_1) {
   for (var _len = arguments.length, args_1 = new Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
@@ -8047,23 +8057,65 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
         return;
       }
       const filename = findPosition;
-      const to = writingPosition.endsWith(options.ext) ? writingPosition : writingPosition + options.ext;
-      let mdname = filename + "/**";
+      const to = writingPosition;
       const defaultOption = {
         regexp: options.exclude || null,
-        ext: options.ext || FileTypes.JS,
+        ext: options.ext || EnumFileTypes.JS,
         sort: options.sort || false,
         hierarchy: options.hierarchy || 5,
         overlookFile: options.overlookFile || "node_modules"
       };
-      mdContent = yield getFileAll(defaultOption, mdname);
-      mdContent = sortFile(mdContent);
-      const result = yield createFile(mdContent, filename);
+      mdContent = yield getFileAll(defaultOption, path$1.join(filename, "/**").replace(/\\/g, "/"));
+      const result = yield createFile(mdContent);
       const readFileContent = yield readFile(result);
-      yield writeFileAll(readFileContent, to);
+      const check = yield checkFileExists(to);
+      if (!check) {
+        yield fs.promises.mkdir(to, {
+          recursive: true
+        });
+      } else {
+        yield fs.promises.rm(to, {
+          recursive: true,
+          force: true
+        });
+        yield fs.promises.mkdir(to, {
+          recursive: true
+        });
+      }
+      const file = yield FileDir.getFile(filename);
+      yield writeFileAll(readFileContent, path$1.join(to, file.name + defaultOption.ext));
+      copyImageFilesAll(filename, to);
     }();
   });
 };
+function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
+  return __awaiter(this, arguments, undefined, function (fileImagePath, writeIamagePath) {
+    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    return function* () {
+      const defaultOption = {
+        regexp: options.exclude || null,
+        ext: enumImageArr
+      };
+      const writePath = path$1.resolve(writeIamagePath, "assets");
+      let imageArray = yield getImageFile(defaultOption, path$1.join(fileImagePath, "/**").replace(/\\/g, "/"));
+      const result = imageArray.map(item => {
+        const fileImageNamePath = path$1.resolve(fileImagePath, item);
+        return FileDir.getFile(fileImageNamePath);
+      });
+      const resultFile = yield Promise.all(result);
+      const check = yield checkFileExists(writePath);
+      if (!check) {
+        yield fs.promises.mkdir(writePath, {
+          recursive: true
+        });
+      }
+      resultFile.forEach(item => {
+        item.copyImageFiles(item, writePath);
+      });
+      console.log("copyImageFilesAll success");
+    }();
+  });
+}
 
-exports.readCatalogue = readCatalogue;
-//# sourceMappingURL=chunk-index-BoYi9Sho.cjs.map
+export { readCatalogue };
+//# sourceMappingURL=chunk-index-Ds8r-8y-.esm.js.map

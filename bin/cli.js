@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { readCatalogue } = require("../dist/common/chunk-index-CTD2gtwT.cjs");
+const { readCatalogue } = require('../dist/common/chunk-index-6HjDHoN3.cjs');
 const path = require("path");
 
 const aegs = process.argv.slice(2);
@@ -49,6 +49,7 @@ if (aegs.includes("--write") || aegs.includes("-w")) {
   console.log("正在写入文件");
   readCatalogue(findPath, writePath, {
     ext,
+    exclude: /README.md/,
   });
   console.log("写入完成");
 }

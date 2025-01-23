@@ -2,22 +2,22 @@
   "name": "read-catalogue",
   "version": "1.0.15",
   "description": "This is a tool that can read all the specified files in the directory",
-  "main": "dist/common/chunk-index-BoYi9Sho.cjs",
-  "module": "dist/esm/chunk-index-CrjcJuS8.esm.js",
-  "browser": "dist/umd/chunk-index-C-DCKDQM.umd.js",
+  "main": "dist/common/chunk-index-6HjDHoN3.cjs",
+  "module": "dist/esm/chunk-index-Ds8r-8y-.esm.js",
+  "browser": "dist/umd/chunk-index-CMsUlASE.umd.js",
   "exports": {
     ".": {
       "import": {
         "types": "./dist/es/index.d.ts",
-        "default": "./dist/esm/chunk-index-CrjcJuS8.esm.js"
+        "default": "./dist/esm/chunk-index-Ds8r-8y-.esm.js"
       },
       "require": {
         "types": "./dist/common/types/",
-        "default": "./dist/common/chunk-index-BoYi9Sho.cjs"
+        "default": "./dist/common/chunk-index-6HjDHoN3.cjs"
       },
       "default": {
         "types": "./dist/umd/index.d.ts",
-        "default": "./dist/umd/chunk-index-C-DCKDQM.umd.js"
+        "default": "./dist/umd/chunk-index-CMsUlASE.umd.js"
       }
     }
   },
