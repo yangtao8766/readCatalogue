@@ -11,11 +11,10 @@ if (aegs.length === 0) {
 }
 
 const extArray = [".md", ".js", ".ts", ".json"];
-let ext, extIndex;
-console.log(aegs, "aegs");
+let ext, extIndex,excl;
 
 if (aegs.findIndex((item) => item === "--write" || item === "-w") === -1) {
-  console.log("请提供写入文件路径");
+  console.log("请提供写入文件参数");
   process.exit(1);
 }
 
@@ -28,11 +27,15 @@ if (aegs.findIndex((item) => item === "--ext" || item === "-e") === -1) {
 const writeIndex =
   aegs.findIndex((item) => item === "--write" || item === "-w") + 1;
 
-ext = aegs[extIndex] || ".md";
-if (!aegs[0]) {
-  console.log("请提供查找文件路径");
-  process.exit(1);
+if(aegs.findIndex((item) => item === "--excl") === -1) {
+  excl = -1
+}else {
+  excl = aegs.findIndex((item) => item === "--excl") + 1
 }
+
+ext = aegs[extIndex] || ".md";
+excl = aegs[excl] || "README.md"
+
 if (!aegs[writeIndex]) {
   console.log("请提供写入文件路径");
   process.exit(1);
@@ -46,10 +49,9 @@ const findPath = path.resolve(process.cwd(), aegs[0]);
 const writePath = path.resolve(process.cwd(), aegs[writeIndex]);
 
 if (aegs.includes("--write") || aegs.includes("-w")) {
-  console.log("正在写入文件");
+  console.log("writing to file");
   readCatalogue(findPath, writePath, {
     ext,
-    exclude: /README.md/,
+    exclude: new RegExp(excl),
   });
-  console.log("写入完成");
 }
