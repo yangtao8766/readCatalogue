@@ -22,3 +22,7 @@ export declare function sortFile(mdContent: string[]): string[];
  * @returns
  */
 export declare function checkFileExists(path: string): Promise<boolean>;
+/**
+ * 文件存在和不存在的处理函数
+ */
+export declare function handleFile(check: boolean, path: string): Promise<void>;

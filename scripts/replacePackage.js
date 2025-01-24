@@ -40,24 +40,15 @@ function findFile(files, reg) {
 function stringReplace(str, sourece, files) {
   switch (str) {
     case "main": {
-      sourece.main = sourece.main.replace(
-        mainReagex,
-        findFile(files, mainReagex)
-      );
+      sourece.main = findFile(files, mainReagex);
       break;
     }
     case "module": {
-      sourece.module = sourece.module.replace(
-        moduleReagex,
-        findFile(files, moduleReagex)
-      );
+      sourece.module = findFile(files, moduleReagex);
       break;
     }
     case "browser": {
-      sourece.browser = sourece.browser.replace(
-        browserReagex,
-        findFile(files, browserReagex)
-      );
+      sourece.browser = findFile(files, browserReagex);
       break;
     }
     case "exports": {
