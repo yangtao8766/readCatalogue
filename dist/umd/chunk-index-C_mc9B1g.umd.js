@@ -8056,8 +8056,29 @@
         }
       });
     }
+    /**
+     * 文件存在和不存在的处理函数
+     */
+    function handleFile(check, path) {
+      return __awaiter(this, undefined, undefined, function* () {
+        if (!check) {
+          yield fs.promises.mkdir(path, {
+            recursive: true
+          });
+        } else {
+          yield fs.promises.rm(path, {
+            recursive: true,
+            force: true
+          });
+          yield fs.promises.mkdir(path, {
+            recursive: true
+          });
+        }
+      });
+    }
 
     let mdContent = [];
+    const ASSETS = "assets";
     const enumImageArr = [EnumFileImageExt.PNG, EnumFileImageExt.JPG, EnumFileImageExt.JPEG, EnumFileImageExt.GIF, EnumFileImageExt.SVG, EnumFileImageExt.WEBP];
     // 获取当前目录下的所有文件和文件夹
     const readCatalogue = function (findPosition_1, writingPosition_1) {
@@ -8080,26 +8101,22 @@
             hierarchy: options.hierarchy || 5,
             overlookFile: options.overlookFile || "node_modules"
           };
+          const check = yield checkFileExists(to);
           mdContent = yield getFileAll(defaultOption, path$1.join(filename, "/**").replace(/\\/g, "/"));
+          copyImageFilesAll(filename, to);
+          if (!mdContent.length) {
+            if (check) {
+              yield fs.promises.rm(to, {
+                recursive: true
+              });
+            }
+            return console.log("no file");
+          }
+          handleFile(check, to);
           const result = yield createFile(mdContent);
           const readFileContent = yield readFile(result);
-          const check = yield checkFileExists(to);
-          if (!check) {
-            yield fs.promises.mkdir(to, {
-              recursive: true
-            });
-          } else {
-            yield fs.promises.rm(to, {
-              recursive: true,
-              force: true
-            });
-            yield fs.promises.mkdir(to, {
-              recursive: true
-            });
-          }
           const file = yield FileDir.getFile(filename);
           yield writeFileAll(readFileContent, path$1.join(to, file.name + defaultOption.ext));
-          copyImageFilesAll(filename, to);
         }();
       });
     };
@@ -8111,19 +8128,20 @@
             regexp: options.exclude || null,
             ext: enumImageArr
           };
-          const writePath = path$1.resolve(writeIamagePath, "assets");
-          let imageArray = yield getImageFile(defaultOption, path$1.join(fileImagePath, "/**").replace(/\\/g, "/"));
-          const result = imageArray.map(item => {
-            const fileImageNamePath = path$1.resolve(fileImagePath, item);
-            return FileDir.getFile(fileImageNamePath);
-          });
-          const resultFile = yield Promise.all(result);
+          const writePath = path$1.resolve(writeIamagePath, ASSETS);
           const check = yield checkFileExists(writePath);
+          let imageArray = yield getImageFile(defaultOption, path$1.join(fileImagePath, "/**").replace(/\\/g, "/"));
+          if (!imageArray.length) return console.log("no image");
           if (!check) {
             yield fs.promises.mkdir(writePath, {
               recursive: true
             });
           }
+          const result = imageArray.map(item => {
+            const fileImageNamePath = path$1.resolve(fileImagePath, item);
+            return FileDir.getFile(fileImageNamePath);
+          });
+          const resultFile = yield Promise.all(result);
           resultFile.forEach(item => {
             item.copyImageFiles(item, writePath);
           });
@@ -8135,4 +8153,4 @@
     exports.readCatalogue = readCatalogue;
 
 }));
-//# sourceMappingURL=chunk-index-CMsUlASE.umd.js.map
+//# sourceMappingURL=chunk-index-C_mc9B1g.umd.js.map

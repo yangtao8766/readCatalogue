@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { readCatalogue } = require('../dist/common/chunk-index-6HjDHoN3.cjs');
+const { readCatalogue } = require("../dist/common/chunk-index-C-AAJZ2K.cjs");
 const path = require("path");
 
 const aegs = process.argv.slice(2);
@@ -11,7 +11,8 @@ if (aegs.length === 0) {
 }
 
 const extArray = [".md", ".js", ".ts", ".json"];
-let ext, extIndex,excl;
+let ext, extIndex, excl, exclIndex;
+console.log(aegs);
 
 if (aegs.findIndex((item) => item === "--write" || item === "-w") === -1) {
   console.log("请提供写入文件参数");
@@ -27,14 +28,14 @@ if (aegs.findIndex((item) => item === "--ext" || item === "-e") === -1) {
 const writeIndex =
   aegs.findIndex((item) => item === "--write" || item === "-w") + 1;
 
-if(aegs.findIndex((item) => item === "--excl") === -1) {
-  excl = -1
-}else {
-  excl = aegs.findIndex((item) => item === "--excl") + 1
+if (aegs.findIndex((item) => item === "--excl") === -1) {
+  exclIndex = -1;
+} else {
+  exclIndex = aegs.findIndex((item) => item === "--excl") + 1;
 }
 
 ext = aegs[extIndex] || ".md";
-excl = aegs[excl] || "README.md"
+excl = aegs[exclIndex] || null;
 
 if (!aegs[writeIndex]) {
   console.log("请提供写入文件路径");

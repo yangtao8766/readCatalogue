@@ -4,6 +4,7 @@ import {
   writeFileAll,
   getImageFile,
   checkFileExists,
+  handleFile,
 } from "./util/index";
 import { EnumFileTypes, EnumFileImageExt } from "./enum/index";
 import type {
@@ -17,6 +18,7 @@ import path from "path";
 import fs from "fs";
 
 let mdContent: string[] = [];
+const ASSETS = "assets";
 const enumImageArr: FileImageExt[] = [
   EnumFileImageExt.PNG,
   EnumFileImageExt.JPG,
@@ -45,27 +47,30 @@ export const readCatalogue: ReadCatalogueType = async (
     hierarchy: options.hierarchy || 5,
     overlookFile: options.overlookFile || "node_modules",
   };
+
+  const check = await checkFileExists(to);
+
   mdContent = await getFileAll(
     defaultOption,
     path.join(filename, "/**").replace(/\\/g, "/")
   );
+  copyImageFilesAll(filename, to);
+  if (!mdContent.length) {
+    if (check) {
+      await fs.promises.rm(to, { recursive: true });
+    }
+    return console.log("no file");
+  }
+  handleFile(check, to);
   const result = await createFile(mdContent);
   const readFileContent = await readFile(result);
-  const check = await checkFileExists(to);
 
-  if (!check) {
-    await fs.promises.mkdir(to, { recursive: true });
-  } else {
-    await fs.promises.rm(to, { recursive: true, force: true });
-    await fs.promises.mkdir(to, { recursive: true });
-  }
   const file = await FileDir.getFile(filename);
 
   await writeFileAll(
     readFileContent,
     path.join(to, file.name + defaultOption.ext)
   );
-  copyImageFilesAll(filename, to);
 };
 async function copyImageFilesAll(
   fileImagePath: string,
@@ -76,24 +81,23 @@ async function copyImageFilesAll(
     regexp: options.exclude || null,
     ext: enumImageArr,
   };
-  const writePath = path.resolve(writeIamagePath, "assets");
+  const writePath = path.resolve(writeIamagePath, ASSETS);
+  const check = await checkFileExists(writePath);
 
   let imageArray = await getImageFile(
     defaultOption,
     path.join(fileImagePath, "/**").replace(/\\/g, "/")
   );
+  if (!imageArray.length) return console.log("no image");
+  if (!check) {
+    await fs.promises.mkdir(writePath, { recursive: true });
+  }
   const result = imageArray.map((item) => {
     const fileImageNamePath = path.resolve(fileImagePath, item);
 
     return FileDir.getFile(fileImageNamePath);
   });
   const resultFile = await Promise.all(result);
-
-  const check = await checkFileExists(writePath);
-
-  if (!check) {
-    await fs.promises.mkdir(writePath, { recursive: true });
-  }
 
   resultFile.forEach((item) => {
     item.copyImageFiles(item, writePath);

@@ -18,3 +18,4 @@ export enum EnumFileImageExt {
   GIF = ".gif",
   WEBP = ".webp",
 }
+
