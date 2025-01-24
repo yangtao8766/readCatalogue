@@ -1,6 +1,6 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "This is a tool that can read all the specified files in the directory",
   "main": "dist/common/chunk-index-6HjDHoN3.cjs",
   "module": "dist/esm/chunk-index-Ds8r-8y-.esm.js",
@@ -26,7 +26,7 @@
   ],
   "scripts": {
     "build:types": "tsc",
-    "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./script/replacePackage.js"
+    "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./scripts/replacePackage.js"
   },
   "keywords": [],
   "author": "junminlaile <1322147900@qq.com>",
