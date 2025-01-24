@@ -7,13 +7,13 @@
   "browser": "dist/umd/chunk-index-CMsUlASE.umd.js",
   "exports": {
     ".": {
+      "require": {
+        "types": "./dist/common/index.d.ts",
+        "default": "./dist/common/chunk-index-6HjDHoN3.cjs"
+      },
       "import": {
         "types": "./dist/es/index.d.ts",
         "default": "./dist/esm/chunk-index-Ds8r-8y-.esm.js"
-      },
-      "require": {
-        "types": "./dist/common/types/",
-        "default": "./dist/common/chunk-index-6HjDHoN3.cjs"
       },
       "default": {
         "types": "./dist/umd/index.d.ts",
