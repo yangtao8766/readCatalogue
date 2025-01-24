@@ -28,7 +28,10 @@
     "build:types": "tsc",
     "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./scripts/replacePackage.js"
   },
-  "keywords": [],
+  "keywords": [
+    "read-catalogue",
+    "read"
+  ],
   "author": "junminlaile <1322147900@qq.com>",
   "license": "MIT",
   "dependencies": {
