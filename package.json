@@ -34,6 +34,14 @@
     "read-catalogue",
     "read"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/junmilaile/readCatalogue.git"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/junmilaile/readCatalogue.git"
+  },
   "author": "junminlaile <1322147900@qq.com>",
   "license": "MIT",
   "dependencies": {
