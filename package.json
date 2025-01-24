@@ -30,10 +30,6 @@
     "build:types": "tsc",
     "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./scripts/replacePackage.js"
   },
-  "keywords": [
-    "read-catalogue",
-    "read"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/junmilaile/readCatalogue.git"
