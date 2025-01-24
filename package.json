@@ -1,6 +1,6 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.17",
+  "version": "1.0.18",
   "description": "This is a tool that can read all the specified files in the directory",
   "main": "dist/common/chunk-index-C-AAJZ2K.cjs",
   "module": "dist/esm/chunk-index-Cmr0j995.esm.js",
@@ -30,10 +30,6 @@
     "build:types": "tsc",
     "build": "rollup -c rollup.config.ts --configPlugin typescript && node ./scripts/replacePackage.js"
   },
-  "keywords": [
-    "read-catalogue",
-    "read"
-  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/junmilaile/readCatalogue.git"
