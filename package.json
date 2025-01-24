@@ -5,6 +5,9 @@
   "main": "dist/common/chunk-index-6HjDHoN3.cjs",
   "module": "dist/esm/chunk-index-Ds8r-8y-.esm.js",
   "browser": "dist/umd/chunk-index-CMsUlASE.umd.js",
+  "bin": {
+    "readCatalogue": "bin/cli.js"
+  },
   "exports": {
     ".": {
       "require": {
