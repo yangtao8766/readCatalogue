@@ -2,9 +2,9 @@
   "name": "read-catalogue",
   "version": "1.0.19",
   "description": "This is a tool that can read all the specified files in the directory",
-  "main": "dist/common/chunk-index-BdCN3Out.cjs",
-  "module": "dist/esm/chunk-index-CH5nSb58.esm.js",
-  "browser": "dist/umd/chunk-index-vV-rMPMW.umd.js",
+  "main": "dist/common/chunk-index-BXJgbydW.cjs",
+  "module": "dist/esm/chunk-index-Cs9xkUUf.esm.js",
+  "browser": "dist/umd/chunk-index-B8IpulJy.umd.js",
   "bin": {
     "readCatalogue": "bin/cli.js"
   },
