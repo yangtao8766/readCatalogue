@@ -8104,16 +8104,11 @@
           };
           const check = yield checkFileExists(to);
           mdContent = yield getFileAll(defaultOption, path$1.join(filename, "/**").replace(/\\/g, "/"));
-          copyImageFilesAll(filename, to);
           if (!mdContent.length) {
-            if (check) {
-              yield fs.promises.rm(to, {
-                recursive: true
-              });
-            }
             return console.log("no file");
           }
-          handleFile(check, to);
+          yield handleFile(check, to);
+          copyImageFilesAll(filename, to);
           const result = yield createFile(mdContent);
           const readFileContent = yield readFile(result);
           const file = yield FileDir.getFile(filename);
@@ -8134,9 +8129,7 @@
           let imageArray = yield getImageFile(defaultOption, path$1.join(fileImagePath, "/**").replace(/\\/g, "/"));
           if (!imageArray.length) return console.log("no image");
           if (!check) {
-            yield fs.promises.mkdir(writePath, {
-              recursive: true
-            });
+            yield fs.promises.mkdir(writePath);
           }
           const result = imageArray.map(item => {
             const fileImageNamePath = path$1.resolve(fileImagePath, item);
@@ -8154,4 +8147,4 @@
     exports.readCatalogue = readCatalogue;
 
 }));
-//# sourceMappingURL=chunk-index-vV-rMPMW.umd.js.map
+//# sourceMappingURL=chunk-index-B8IpulJy.umd.js.map

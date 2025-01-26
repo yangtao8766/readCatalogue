@@ -128,7 +128,7 @@ export async function checkFileExists(path: string): Promise<boolean> {
 /**
  * 文件存在和不存在的处理函数
  */
-export async function handleFile(check: boolean, path:string) {
+export async function handleFile(check: boolean, path: string) {
   if (!check) {
     await fs.promises.mkdir(path, { recursive: true });
   } else {

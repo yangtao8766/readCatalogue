@@ -55,14 +55,13 @@ export const readCatalogue: ReadCatalogueType = async (
     defaultOption,
     path.join(filename, "/**").replace(/\\/g, "/")
   );
-  copyImageFilesAll(filename, to);
   if (!mdContent.length) {
-    if (check) {
-      await fs.promises.rm(to, { recursive: true });
-    }
     return console.log("no file");
   }
-  handleFile(check, to);
+
+  await handleFile(check, to);
+  copyImageFilesAll(filename, to);
+
   const result = await createFile(mdContent);
   const readFileContent = await readFile(result);
 
@@ -91,8 +90,9 @@ async function copyImageFilesAll(
   );
   if (!imageArray.length) return console.log("no image");
   if (!check) {
-    await fs.promises.mkdir(writePath, { recursive: true });
+    await fs.promises.mkdir(writePath);
   }
+
   const result = imageArray.map((item) => {
     const fileImageNamePath = path.resolve(fileImagePath, item);
 
