@@ -19,6 +19,7 @@ import fs from "fs";
 
 let mdContent: string[] = [];
 const ASSETS = "assets";
+const STRING = "string";
 const enumImageArr: FileImageExt[] = [
   EnumFileImageExt.PNG,
   EnumFileImageExt.JPG,
@@ -33,7 +34,7 @@ export const readCatalogue: ReadCatalogueType = async (
   writingPosition,
   options = {}
 ) => {
-  if (typeof findPosition !== "string" || typeof writingPosition !== "string") {
+  if (typeof findPosition !== STRING || typeof writingPosition !== STRING) {
     console.error(new TypeError("type in not sting"));
     return;
   }

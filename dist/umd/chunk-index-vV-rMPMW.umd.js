@@ -8079,6 +8079,7 @@
 
     let mdContent = [];
     const ASSETS = "assets";
+    const STRING = "string";
     const enumImageArr = [EnumFileImageExt.PNG, EnumFileImageExt.JPG, EnumFileImageExt.JPEG, EnumFileImageExt.GIF, EnumFileImageExt.SVG, EnumFileImageExt.WEBP];
     // 获取当前目录下的所有文件和文件夹
     const readCatalogue = function (findPosition_1, writingPosition_1) {
@@ -8088,7 +8089,7 @@
       return __awaiter(undefined, [findPosition_1, writingPosition_1, ...args_1], undefined, function (findPosition, writingPosition) {
         let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
         return function* () {
-          if (typeof findPosition !== "string" || typeof writingPosition !== "string") {
+          if (typeof findPosition !== STRING || typeof writingPosition !== STRING) {
             console.error(new TypeError("type in not sting"));
             return;
           }
@@ -8153,4 +8154,4 @@
     exports.readCatalogue = readCatalogue;
 
 }));
-//# sourceMappingURL=chunk-index-C_mc9B1g.umd.js.map
+//# sourceMappingURL=chunk-index-vV-rMPMW.umd.js.map
