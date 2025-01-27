@@ -1,4 +1,4 @@
-# ReadCatalogue
+# read-catalogue
 
 This is a directory that can read all files and can be written to a file
 
