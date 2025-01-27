@@ -12,7 +12,6 @@ if (aegs.length === 0) {
 
 const extArray = [".md", ".js", ".ts", ".json"];
 let ext, extIndex, excl, exclIndex;
-console.log(aegs);
 
 if (aegs.findIndex((item) => item === "--write" || item === "-w") === -1) {
   console.log("请提供写入文件参数");
@@ -56,3 +55,4 @@ if (aegs.includes("--write") || aegs.includes("-w")) {
     exclude: new RegExp(excl),
   });
 }
+
