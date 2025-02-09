@@ -105,8 +105,16 @@ export async function readFile(files: FileDir[]) {
   });
   const hashArray = await Promise.all(result);
   const sourceArray = removeDuplicatesByMD5(hashArray.flat());
-  const source = sourceArray.map(async (file) => {
-    const sourceFile = new FileDir(file.filename, file.name, file.ext, file.isFile, file.size, file.createTime, file.updateTime)
+  const source = sourceArray.sort().map(async (file) => {
+    const sourceFile = new FileDir(
+      file.filename,
+      file.name,
+      file.ext,
+      file.isFile,
+      file.size,
+      file.createTime,
+      file.updateTime
+    );
     const source = await sourceFile.getContent();
     return source;
   });

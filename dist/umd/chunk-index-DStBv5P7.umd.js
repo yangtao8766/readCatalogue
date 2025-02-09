@@ -895,7 +895,7 @@
         }));
         const hashArray = yield Promise.all(result);
         const sourceArray = removeDuplicatesByMD5(hashArray.flat());
-        const source = sourceArray.map(file => __awaiter(this, undefined, undefined, function* () {
+        const source = sourceArray.sort().map(file => __awaiter(this, undefined, undefined, function* () {
           const sourceFile = new FileDir(file.filename, file.name, file.ext, file.isFile, file.size, file.createTime, file.updateTime);
           const source = yield sourceFile.getContent();
           return source;
@@ -8744,7 +8744,15 @@
         }
         result = result.flat();
         result = [...new Set(result)];
-        result = result.sort();
+        result = result.sort((a, b) => {
+          const matchA = a.match(/\d+/);
+          const matchB = b.match(/\d+/);
+          console.log(matchA, matchB);
+          const numA = matchA ? parseInt(matchA[0], 10) : 0;
+          const numB = matchB ? parseInt(matchB[0], 10) : 0;
+          return numA - numB;
+        });
+        console.log(result);
         return result;
       });
     }
@@ -8884,4 +8892,4 @@
     exports.readCatalogue = readCatalogue;
 
 }));
-//# sourceMappingURL=chunk-index-wcDZYYgT.umd.js.map
+//# sourceMappingURL=chunk-index-DStBv5P7.umd.js.map

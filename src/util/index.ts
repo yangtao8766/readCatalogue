@@ -6,7 +6,6 @@ import type { DefaultOption, ImageDefaultOption } from "../types/index";
 
 let isSort: boolean = false;
 
-
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -32,7 +31,14 @@ export async function getFileAll(
   }
   result = result.flat();
   result = [...new Set(result)];
-  result = result.sort();
+  result = result.sort((a, b) => {
+    const matchA = a.match(/\d+/);
+    const matchB = b.match(/\d+/);
+    console.log(matchA, matchB);
+    const numA = matchA ? parseInt(matchA[0], 10) : 0;
+    const numB = matchB ? parseInt(matchB[0], 10) : 0;
+    return numA - numB;
+  });
   return result;
 }
 

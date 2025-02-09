@@ -1,7 +1,8 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "This is a tool that can read all the specified files in the directory",
+  "browser": "dist/umd/chunk-index-DStBv5P7.umd.js",
   "bin": {
     "readCatalogue": "bin/cli.js"
   },
@@ -9,15 +10,15 @@
     ".": {
       "require": {
         "types": "./dist/common/index.d.ts",
-        "default": "./dist/common/chunk-index-ki87fkHT.cjs"
+        "default": "./dist/common/chunk-index-CCnipq0z.cjs"
       },
       "import": {
         "types": "./dist/es/index.d.ts",
-        "default": "./dist/esm/chunk-index-o6EkyVPr.esm.js"
+        "default": "./dist/esm/chunk-index-jiedEzQ8.esm.js"
       },
       "default": {
         "types": "./dist/umd/index.d.ts",
-        "default": "./dist/umd/chunk-index-wcDZYYgT.umd.js"
+        "default": "./dist/umd/chunk-index-DStBv5P7.umd.js"
       }
     }
   },
@@ -61,7 +62,6 @@
     "spark-md5": "^3.0.2",
     "tslib": "^2.8.1"
   },
-  "main": "dist/common/chunk-index-ki87fkHT.cjs",
-  "browser": "dist/umd/chunk-index-wcDZYYgT.umd.js",
-  "module": "dist/esm/chunk-index-o6EkyVPr.esm.js"
+  "module": "dist/esm/chunk-index-jiedEzQ8.esm.js",
+  "main": "dist/common/chunk-index-CCnipq0z.cjs"
 }
