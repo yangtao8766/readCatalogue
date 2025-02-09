@@ -1,6 +1,6 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "This is a tool that can read all the specified files in the directory",
   "module": "dist/esm/chunk-index-CSV6lR2P.esm.js",
   "main": "dist/common/chunk-index-CU1-zdfV.cjs",
