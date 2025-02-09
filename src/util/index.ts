@@ -6,25 +6,6 @@ import type { DefaultOption, ImageDefaultOption } from "../types/index";
 
 let isSort: boolean = false;
 
-// 提取文件名并去除重复项
-function extractFileName(filePath: string) {
-  return path.basename(filePath);
-}
-
-function removeDuplicateFilesByFileName(filePaths: string[]) {
-  const fileNames = new Set();
-  const uniqueFilePaths = [];
-
-  for (const filePath of filePaths) {
-    const fileName = extractFileName(filePath);
-    if (!fileNames.has(fileName)) {
-      fileNames.add(fileName);
-      uniqueFilePaths.push(filePath);
-    }
-  }
-
-  return uniqueFilePaths;
-}
 
 /**
  * 得到一个目录的所有指定后缀文件
@@ -52,7 +33,6 @@ export async function getFileAll(
   result = result.flat();
   result = [...new Set(result)];
   result = result.sort();
-  result = removeDuplicateFilesByFileName(result);
   return result;
 }
 

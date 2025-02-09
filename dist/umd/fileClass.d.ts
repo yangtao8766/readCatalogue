@@ -26,4 +26,4 @@ export declare function createFile(mdContent: string[]): Promise<FileDir[]>;
 /**
  * 读取一个一个文件对象信息
  */
-export declare function readFile(file: FileDir[]): Promise<PromiseSettledResult<string | Buffer | null>[]>;
+export declare function readFile(files: FileDir[]): Promise<PromiseSettledResult<string | Buffer | null>[]>;

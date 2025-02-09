@@ -64,7 +64,6 @@ export const readCatalogue: ReadCatalogueType = async (
 
   const result = await createFile(mdContent);
   const readFileContent = await readFile(result);
-
   const file = await FileDir.getFile(filename);
 
   await writeFileAll(

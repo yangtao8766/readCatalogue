@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import SparkMD5 from "spark-md5";
 import type { FileFunction } from "./types/index";
 
 /**
@@ -92,12 +93,30 @@ export async function createFile(mdContent: string[]) {
 /**
  * 读取一个一个文件对象信息
  */
-export async function readFile(file: FileDir[]) {
-  const result = file.map(async (file) => {
-    return await file.getContent();
+export async function readFile(files: FileDir[]) {
+  const spark = new SparkMD5.ArrayBuffer();
+  let hash: any[] = [];
+  const result = files.map(async (file) => {
+    const source = await file.getContent(true);
+    spark.append(source as ArrayBuffer);
+    const md5 = spark.end();
+    hash.push({ ...file, md5 });
+    return hash;
   });
-
-  const resultText = await Promise.allSettled(result);
-
+  const hashArray = await Promise.all(result);
+  const sourceArray = removeDuplicatesByMD5(hashArray.flat());
+  const source = sourceArray.map(async (file) => {
+    const sourceFile = new FileDir(file.filename, file.name, file.ext, file.isFile, file.size, file.createTime, file.updateTime)
+    const source = await sourceFile.getContent();
+    return source;
+  });
+  const resultText = await Promise.allSettled(source);
   return resultText;
+}
+
+function removeDuplicatesByMD5(hashs: any[]) {
+  const fileNames = new Set();
+  return hashs.filter(
+    (item) => !fileNames.has(item.md5) && fileNames.add(item.md5)
+  );
 }

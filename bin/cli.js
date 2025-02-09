@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { readCatalogue } = require('../dist/common/chunk-index-BXJgbydW.cjs');
+const { readCatalogue } = require('../dist/common/chunk-index-ki87fkHT.cjs');
 const path = require("path");
 
 const aegs = process.argv.slice(2);

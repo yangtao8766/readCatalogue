@@ -1,10 +1,7 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.20",
+  "version": "1.0.21",
   "description": "This is a tool that can read all the specified files in the directory",
-  "main": "dist/common/chunk-index-BXJgbydW.cjs",
-  "module": "dist/esm/chunk-index-Cs9xkUUf.esm.js",
-  "browser": "dist/umd/chunk-index-B8IpulJy.umd.js",
   "bin": {
     "readCatalogue": "bin/cli.js"
   },
@@ -12,15 +9,15 @@
     ".": {
       "require": {
         "types": "./dist/common/index.d.ts",
-        "default": "./dist/common/chunk-index-BXJgbydW.cjs"
+        "default": "./dist/common/chunk-index-ki87fkHT.cjs"
       },
       "import": {
         "types": "./dist/es/index.d.ts",
-        "default": "./dist/esm/chunk-index-Cs9xkUUf.esm.js"
+        "default": "./dist/esm/chunk-index-o6EkyVPr.esm.js"
       },
       "default": {
         "types": "./dist/umd/index.d.ts",
-        "default": "./dist/umd/chunk-index-B8IpulJy.umd.js"
+        "default": "./dist/umd/chunk-index-wcDZYYgT.umd.js"
       }
     }
   },
@@ -58,8 +55,13 @@
     "@rollup/plugin-typescript": "^12.1.2",
     "@types/babel__core": "^7.20.5",
     "@types/node": "^20.14.6",
+    "@types/spark-md5": "^3.0.5",
     "rollup": "^4.31.0",
     "rollup-plugin-clear": "^2.0.7",
+    "spark-md5": "^3.0.2",
     "tslib": "^2.8.1"
-  }
+  },
+  "main": "dist/common/chunk-index-ki87fkHT.cjs",
+  "browser": "dist/umd/chunk-index-wcDZYYgT.umd.js",
+  "module": "dist/esm/chunk-index-o6EkyVPr.esm.js"
 }
