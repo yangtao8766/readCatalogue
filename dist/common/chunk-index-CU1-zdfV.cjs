@@ -8758,7 +8758,6 @@ function getFileAll(option, mdname) {
       const numB = matchB ? parseInt(matchB[0], 10) : 0;
       return numA - numB;
     });
-    console.log(result);
     return result;
   });
 }
@@ -8896,4 +8895,4 @@ function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
 }
 
 exports.readCatalogue = readCatalogue;
-//# sourceMappingURL=chunk-index-CCnipq0z.cjs.map
+//# sourceMappingURL=chunk-index-CU1-zdfV.cjs.map

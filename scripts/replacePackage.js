@@ -5,7 +5,6 @@ const { glob } = require("glob");
 const replaceArray = ["main", "module", "browser", "exports"];
 const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.cjs)/;
 const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.esm\.js)/;
-const browserReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.umd\.js)/;
 const requireReagex = /require\(["']([^"']+)["']\)/;
 function exportsReplace(exports, files) {
   for (const key in exports) {
@@ -16,10 +15,6 @@ function exportsReplace(exports, files) {
       }
       case "require": {
         exports[key].default = "./" + findFile(files, mainReagex);
-        break;
-      }
-      case "default": {
-        exports[key].default = "./" + findFile(files, browserReagex);
         break;
       }
     }
@@ -45,10 +40,6 @@ function stringReplace(str, sourece, files) {
     }
     case "module": {
       sourece.module = findFile(files, moduleReagex);
-      break;
-    }
-    case "browser": {
-      sourece.browser = findFile(files, browserReagex);
       break;
     }
     case "exports": {
