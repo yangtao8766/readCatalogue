@@ -34,7 +34,6 @@ export async function getFileAll(
   result = result.sort((a, b) => {
     const matchA = a.match(/\d+/);
     const matchB = b.match(/\d+/);
-    console.log(matchA, matchB);
     const numA = matchA ? parseInt(matchA[0], 10) : 0;
     const numB = matchB ? parseInt(matchB[0], 10) : 0;
     return numA - numB;
