@@ -1,9 +1,9 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.24",
+  "version": "1.0.25",
   "description": "This is a tool that can read all the specified files in the directory",
-  "main": "dist/common/chunk-index-DJVjiFQW.cjs",
-  "module": "dist/esm/chunk-index-C-JWvnPt.esm.js",
+  "main": "dist/common/chunk-index-v-2YyN3m.cjs",
+  "module": "dist/esm/chunk-index-1UZbwgKR.esm.js",
   "bin": {
     "readCatalogue": "bin/cli.js"
   },
@@ -11,11 +11,11 @@
     ".": {
       "require": {
         "types": "./dist/common/index.d.ts",
-        "default": "./dist/common/chunk-index-DJVjiFQW.cjs"
+        "default": "./dist/common/chunk-index-v-2YyN3m.cjs"
       },
       "import": {
         "types": "./dist/es/index.d.ts",
-        "default": "./dist/esm/chunk-index-C-JWvnPt.esm.js"
+        "default": "./dist/esm/chunk-index-1UZbwgKR.esm.js"
       }
     }
   },

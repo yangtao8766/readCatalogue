@@ -8730,10 +8730,10 @@ function getFileAll(option, mdname) {
     result = result.flat();
     result = [...new Set(result)];
     result = result.sort((a, b) => {
-      const matchA = a.match(/\d+/);
-      const matchB = b.match(/\d+/);
-      const numA = matchA ? parseInt(matchA[0], 10) : 0;
-      const numB = matchB ? parseInt(matchB[0], 10) : 0;
+      const matchA = a.match(/(\d+)(?=[^\d]*$)/);
+      const matchB = b.match(/(\d+)(?=[^\d]*$)/);
+      const numA = matchA ? ~~matchA[0] : 0;
+      const numB = matchB ? ~~matchB[0] : 0;
       return numA - numB;
     });
     return result;
@@ -8877,4 +8877,4 @@ function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
 }
 
 export { readCatalogue };
-//# sourceMappingURL=chunk-index-C-JWvnPt.esm.js.map
+//# sourceMappingURL=chunk-index-1UZbwgKR.esm.js.map
