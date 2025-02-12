@@ -14,6 +14,7 @@ import type {
   ImageDefaultOption,
   FileImageExt,
 } from "./types/index";
+import { error } from "./error";
 import path from "path";
 import fs from "fs";
 
@@ -35,7 +36,7 @@ export const readCatalogue: ReadCatalogueType = async (
   options = {}
 ) => {
   if (typeof findPosition !== STRING || typeof writingPosition !== STRING) {
-    console.error(new TypeError("type in not sting"));
+    error("type in not sting");
     return;
   }
   const filename = findPosition;
@@ -64,8 +65,7 @@ export const readCatalogue: ReadCatalogueType = async (
 
   const result = await createFile(mdContent);
   const readFileContent = await readFile(result);
-  const file = await FileDir.getFile(filename);
-
+  const file = await FileDir.getFile(to);
   await writeFileAll(
     readFileContent,
     path.join(to, file.name + defaultOption.ext)

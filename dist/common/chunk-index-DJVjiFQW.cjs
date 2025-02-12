@@ -8826,6 +8826,10 @@ function handleFile(check, path) {
   });
 }
 
+function error(message) {
+  console.error(new TypeError(message));
+}
+
 let mdContent = [];
 const ASSETS = "assets";
 const STRING = "string";
@@ -8839,7 +8843,7 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
     let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
     return function* () {
       if (typeof findPosition !== STRING || typeof writingPosition !== STRING) {
-        console.error(new TypeError("type in not sting"));
+        error("type in not sting");
         return;
       }
       const filename = findPosition;
@@ -8860,7 +8864,7 @@ const readCatalogue = function (findPosition_1, writingPosition_1) {
       copyImageFilesAll(filename, to);
       const result = yield createFile(mdContent);
       const readFileContent = yield readFile(result);
-      const file = yield FileDir.getFile(filename);
+      const file = yield FileDir.getFile(to);
       yield writeFileAll(readFileContent, path$1.join(to, file.name + defaultOption.ext));
     }();
   });
@@ -8894,4 +8898,4 @@ function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
 }
 
 exports.readCatalogue = readCatalogue;
-//# sourceMappingURL=chunk-index-D88cc9J9.cjs.map
+//# sourceMappingURL=chunk-index-DJVjiFQW.cjs.map
