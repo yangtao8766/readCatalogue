@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import SparkMD5 from "spark-md5";
 import type { FileFunction } from "./types/index";
+import { compareNumbers } from "./util/index";
 
 /**
  * 一个文件对象
@@ -105,19 +106,21 @@ export async function readFile(files: FileDir[]) {
   });
   const hashArray = await Promise.all(result);
   const sourceArray = removeDuplicatesByMD5(hashArray.flat());
-  const source = sourceArray.sort().map(async (file) => {
-    const sourceFile = new FileDir(
-      file.filename,
-      file.name,
-      file.ext,
-      file.isFile,
-      file.size,
-      file.createTime,
-      file.updateTime
-    );
-    const source = await sourceFile.getContent();
-    return source;
-  });
+  const source = sourceArray
+    .sort((a, b) => compareNumbers(a.filename, b.filename))
+    .map(async (file) => {
+      const sourceFile = new FileDir(
+        file.filename,
+        file.name,
+        file.ext,
+        file.isFile,
+        file.size,
+        file.createTime,
+        file.updateTime
+      );
+      const source = await sourceFile.getContent();
+      return source;
+    });
   const resultText = await Promise.allSettled(source);
   return resultText;
 }

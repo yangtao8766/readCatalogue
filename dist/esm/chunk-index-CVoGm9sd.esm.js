@@ -779,121 +779,6 @@ function requireSparkMd5 () {
 var sparkMd5Exports = requireSparkMd5();
 var SparkMD5 = /*@__PURE__*/getDefaultExportFromCjs(sparkMd5Exports);
 
-/**
- * 一个文件对象
- */
-class FileDir {
-  constructor(filename, name, ext, isFile, size, createTime, updateTime) {
-    this.filename = filename;
-    this.name = name;
-    this.ext = ext;
-    this.isFile = isFile;
-    this.size = size;
-    this.createTime = createTime;
-    this.updateTime = updateTime;
-    this.filename = filename;
-    this.name = name;
-    this.ext = ext;
-    this.isFile = isFile;
-    this.size = size;
-    this.createTime = createTime;
-    this.updateTime = updateTime;
-  }
-  getContent() {
-    return __awaiter(this, arguments, undefined, function () {
-      var _this = this;
-      let isBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-      return function* () {
-        if (_this.isFile) {
-          if (isBuffer) {
-            return yield fs.promises.readFile(_this.filename);
-          } else {
-            return yield fs.promises.readFile(_this.filename, "utf-8");
-          }
-        }
-        return null;
-      }();
-    });
-  }
-  copyImageFiles(files, writeIamagePath) {
-    return __awaiter(this, undefined, undefined, function* () {
-      yield fs.promises.copyFile(files.filename, writeIamagePath + "/" + files.name);
-    });
-  }
-  getChildren() {
-    return __awaiter(this, undefined, undefined, function* () {
-      if (this.isFile) {
-        //文件不可能有子文件
-        return [];
-      }
-      let children = yield fs.promises.readdir(this.filename);
-      children = children.map(name => {
-        const result = path$1.resolve(this.filename, name);
-        return FileDir.getFile(result);
-      });
-      return Promise.all(children);
-    });
-  }
-  static getFile(filename) {
-    return __awaiter(this, undefined, undefined, function* () {
-      const stat = yield fs.promises.stat(filename);
-      const name = path$1.basename(filename);
-      const ext = path$1.extname(filename);
-      const isFile = stat.isFile();
-      const size = stat.size;
-      const createTime = new Date(stat.birthtime);
-      const updateTime = new Date(stat.mtime);
-      return new FileDir(filename, name, ext, isFile, size, createTime, updateTime);
-    });
-  }
-}
-/**
- * 创建文件对象
- * @param mdContent
- * @param filename
- * @returns
- */
-function createFile(mdContent) {
-  return __awaiter(this, undefined, undefined, function* () {
-    const result = mdContent.map(item => __awaiter(this, undefined, undefined, function* () {
-      return yield FileDir.getFile(item);
-    }));
-    const resultFile = yield Promise.all(result);
-    return resultFile;
-  });
-}
-/**
- * 读取一个一个文件对象信息
- */
-function readFile(files) {
-  return __awaiter(this, undefined, undefined, function* () {
-    const spark = new SparkMD5.ArrayBuffer();
-    let hash = [];
-    const result = files.map(file => __awaiter(this, undefined, undefined, function* () {
-      const source = yield file.getContent(true);
-      spark.append(source);
-      const md5 = spark.end();
-      hash.push(Object.assign(Object.assign({}, file), {
-        md5
-      }));
-      return hash;
-    }));
-    const hashArray = yield Promise.all(result);
-    const sourceArray = removeDuplicatesByMD5(hashArray.flat());
-    const source = sourceArray.sort().map(file => __awaiter(this, undefined, undefined, function* () {
-      const sourceFile = new FileDir(file.filename, file.name, file.ext, file.isFile, file.size, file.createTime, file.updateTime);
-      const source = yield sourceFile.getContent();
-      return source;
-    }));
-    const resultText = yield Promise.allSettled(source);
-    return resultText;
-  });
-}
-function removeDuplicatesByMD5(hashs) {
-  const fileNames = new Set();
-  return hashs.filter(item => !fileNames.has(item.md5) && fileNames.add(item.md5));
-}
-
 var balancedMatch;
 var hasRequiredBalancedMatch;
 
@@ -8706,6 +8591,22 @@ var EnumFileImageExt;
   EnumFileImageExt["WEBP"] = ".webp";
 })(EnumFileImageExt || (EnumFileImageExt = {}));
 
+// 提取路径中的所有数字
+const extractNumbers = str => {
+  const matches = str.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+};
+// 比较两个数组的数字
+const compareNumbers = (a, b) => {
+  const numbersA = extractNumbers(a);
+  const numbersB = extractNumbers(b);
+  for (let i = 0; i < Math.max(numbersA.length, numbersB.length); i++) {
+    if (numbersA[i] !== numbersB[i]) {
+      return (numbersA[i] || 0) - (numbersB[i] || 0);
+    }
+  }
+  return 0;
+};
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -8729,13 +8630,8 @@ function getFileAll(option, mdname) {
     }
     result = result.flat();
     result = [...new Set(result)];
-    result = result.sort((a, b) => {
-      const matchA = a.match(/(\d+)(?=[^\d]*$)/);
-      const matchB = b.match(/(\d+)(?=[^\d]*$)/);
-      const numA = matchA ? ~~matchA[0] : 0;
-      const numB = matchB ? ~~matchB[0] : 0;
-      return numA - numB;
-    });
+    result = result.sort((a, b) => compareNumbers(a, b));
+    console.log(result);
     return result;
   });
 }
@@ -8803,6 +8699,121 @@ function handleFile(check, path) {
       });
     }
   });
+}
+
+/**
+ * 一个文件对象
+ */
+class FileDir {
+  constructor(filename, name, ext, isFile, size, createTime, updateTime) {
+    this.filename = filename;
+    this.name = name;
+    this.ext = ext;
+    this.isFile = isFile;
+    this.size = size;
+    this.createTime = createTime;
+    this.updateTime = updateTime;
+    this.filename = filename;
+    this.name = name;
+    this.ext = ext;
+    this.isFile = isFile;
+    this.size = size;
+    this.createTime = createTime;
+    this.updateTime = updateTime;
+  }
+  getContent() {
+    return __awaiter(this, arguments, undefined, function () {
+      var _this = this;
+      let isBuffer = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      return function* () {
+        if (_this.isFile) {
+          if (isBuffer) {
+            return yield fs.promises.readFile(_this.filename);
+          } else {
+            return yield fs.promises.readFile(_this.filename, "utf-8");
+          }
+        }
+        return null;
+      }();
+    });
+  }
+  copyImageFiles(files, writeIamagePath) {
+    return __awaiter(this, undefined, undefined, function* () {
+      yield fs.promises.copyFile(files.filename, writeIamagePath + "/" + files.name);
+    });
+  }
+  getChildren() {
+    return __awaiter(this, undefined, undefined, function* () {
+      if (this.isFile) {
+        //文件不可能有子文件
+        return [];
+      }
+      let children = yield fs.promises.readdir(this.filename);
+      children = children.map(name => {
+        const result = path$1.resolve(this.filename, name);
+        return FileDir.getFile(result);
+      });
+      return Promise.all(children);
+    });
+  }
+  static getFile(filename) {
+    return __awaiter(this, undefined, undefined, function* () {
+      const stat = yield fs.promises.stat(filename);
+      const name = path$1.basename(filename);
+      const ext = path$1.extname(filename);
+      const isFile = stat.isFile();
+      const size = stat.size;
+      const createTime = new Date(stat.birthtime);
+      const updateTime = new Date(stat.mtime);
+      return new FileDir(filename, name, ext, isFile, size, createTime, updateTime);
+    });
+  }
+}
+/**
+ * 创建文件对象
+ * @param mdContent
+ * @param filename
+ * @returns
+ */
+function createFile(mdContent) {
+  return __awaiter(this, undefined, undefined, function* () {
+    const result = mdContent.map(item => __awaiter(this, undefined, undefined, function* () {
+      return yield FileDir.getFile(item);
+    }));
+    const resultFile = yield Promise.all(result);
+    return resultFile;
+  });
+}
+/**
+ * 读取一个一个文件对象信息
+ */
+function readFile(files) {
+  return __awaiter(this, undefined, undefined, function* () {
+    const spark = new SparkMD5.ArrayBuffer();
+    let hash = [];
+    const result = files.map(file => __awaiter(this, undefined, undefined, function* () {
+      const source = yield file.getContent(true);
+      spark.append(source);
+      const md5 = spark.end();
+      hash.push(Object.assign(Object.assign({}, file), {
+        md5
+      }));
+      return hash;
+    }));
+    const hashArray = yield Promise.all(result);
+    const sourceArray = removeDuplicatesByMD5(hashArray.flat());
+    const source = sourceArray.sort((a, b) => compareNumbers(a.filename, b.filename)).map(file => __awaiter(this, undefined, undefined, function* () {
+      const sourceFile = new FileDir(file.filename, file.name, file.ext, file.isFile, file.size, file.createTime, file.updateTime);
+      const source = yield sourceFile.getContent();
+      return source;
+    }));
+    const resultText = yield Promise.allSettled(source);
+    return resultText;
+  });
+}
+function removeDuplicatesByMD5(hashs) {
+  const fileNames = new Set();
+  return hashs.filter(item => !fileNames.has(item.md5) && fileNames.add(item.md5));
 }
 
 function error(message) {
@@ -8877,4 +8888,4 @@ function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
 }
 
 export { readCatalogue };
-//# sourceMappingURL=chunk-index-1UZbwgKR.esm.js.map
+//# sourceMappingURL=chunk-index-CVoGm9sd.esm.js.map

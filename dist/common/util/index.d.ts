@@ -1,4 +1,5 @@
 import type { DefaultOption, ImageDefaultOption } from "../types/index";
+export declare const compareNumbers: (a: string, b: string) => number;
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option

@@ -6,6 +6,25 @@ import type { DefaultOption, ImageDefaultOption } from "../types/index";
 
 let isSort: boolean = false;
 
+// 提取路径中的所有数字
+const extractNumbers = (str: string) => {
+  const matches = str.match(/\d+/g);
+  return matches ? matches.map(Number) : [];
+};
+
+// 比较两个数组的数字
+export const compareNumbers = (a: string, b: string): number => {
+  const numbersA = extractNumbers(a);
+  const numbersB = extractNumbers(b);
+
+  for (let i = 0; i < Math.max(numbersA.length, numbersB.length); i++) {
+    if (numbersA[i] !== numbersB[i]) {
+      return (numbersA[i] || 0) - (numbersB[i] || 0);
+    }
+  }
+  return 0;
+};
+
 /**
  * 得到一个目录的所有指定后缀文件
  * @param option
@@ -30,13 +49,8 @@ export async function getFileAll(
   }
   result = result.flat();
   result = [...new Set(result)];
-  result = result.sort((a, b) => {
-    const matchA = a.match(/(\d+)(?=[^\d]*$)/);
-    const matchB = b.match(/(\d+)(?=[^\d]*$)/);
-    const numA = matchA ? ~~matchA[0] : 0;
-    const numB = matchB ? ~~matchB[0] : 0;
-    return numA - numB;
-  });
+  result = result.sort((a, b) => compareNumbers(a, b));
+  console.log(result);
   return result;
 }
 
