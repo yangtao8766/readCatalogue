@@ -1,12 +1,33 @@
-import fs, { realpathSync as realpathSync$1, lstatSync, readdir, readdirSync, readlinkSync } from 'fs';
-import path$1 from 'path';
-import { fileURLToPath } from 'node:url';
-import { win32, posix } from 'node:path';
-import * as actualFS from 'node:fs';
-import { lstat, readdir as readdir$1, readlink, realpath } from 'node:fs/promises';
-import { EventEmitter } from 'node:events';
-import Stream from 'node:stream';
-import { StringDecoder } from 'node:string_decoder';
+'use strict';
+
+var fs = require('fs');
+var path$1 = require('path');
+var node_url = require('node:url');
+var node_path = require('node:path');
+var actualFS = require('node:fs');
+var promises = require('node:fs/promises');
+var node_events = require('node:events');
+var Stream = require('node:stream');
+var node_string_decoder = require('node:string_decoder');
+
+function _interopNamespaceDefault(e) {
+    var n = Object.create(null);
+    if (e) {
+        Object.keys(e).forEach(function (k) {
+            if (k !== 'default') {
+                var d = Object.getOwnPropertyDescriptor(e, k);
+                Object.defineProperty(n, k, d.get ? d : {
+                    enumerable: true,
+                    get: function () { return e[k]; }
+                });
+            }
+        });
+    }
+    n.default = e;
+    return Object.freeze(n);
+}
+
+var actualFS__namespace = /*#__PURE__*/_interopNamespaceDefault(actualFS);
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -4298,7 +4319,7 @@ const isStream = (s) => !!s &&
  */
 const isReadable = (s) => !!s &&
     typeof s === 'object' &&
-    s instanceof EventEmitter &&
+    s instanceof node_events.EventEmitter &&
     typeof s.pipe === 'function' &&
     // node core Writable streams have a pipe() method, but it throws
     s.pipe !== Stream.Writable.prototype.pipe;
@@ -4307,7 +4328,7 @@ const isReadable = (s) => !!s &&
  */
 const isWritable = (s) => !!s &&
     typeof s === 'object' &&
-    s instanceof EventEmitter &&
+    s instanceof node_events.EventEmitter &&
     typeof s.write === 'function' &&
     typeof s.end === 'function';
 const EOF = Symbol('EOF');
@@ -4413,7 +4434,7 @@ const isEncodingOptions = (o) => !o.objectMode && !!o.encoding && o.encoding !==
  * `Events` is the set of event handler signatures that this object
  * will emit, see {@link Minipass.Events}
  */
-class Minipass extends EventEmitter {
+class Minipass extends node_events.EventEmitter {
     [FLOWING] = false;
     [PAUSED] = false;
     [PIPES] = [];
@@ -4468,7 +4489,7 @@ class Minipass extends EventEmitter {
         }
         this[ASYNC] = !!options.async;
         this[DECODER] = this[ENCODING]
-            ? new StringDecoder(this[ENCODING])
+            ? new node_string_decoder.StringDecoder(this[ENCODING])
             : null;
         //@ts-ignore - private option for debugging and testing
         if (options && options.debugExposeBuffer === true) {
@@ -5292,22 +5313,22 @@ class Minipass extends EventEmitter {
     }
 }
 
-const realpathSync = realpathSync$1.native;
+const realpathSync = fs.realpathSync.native;
 const defaultFS = {
-    lstatSync,
-    readdir: readdir,
-    readdirSync,
-    readlinkSync,
+    lstatSync: fs.lstatSync,
+    readdir: fs.readdir,
+    readdirSync: fs.readdirSync,
+    readlinkSync: fs.readlinkSync,
     realpathSync,
     promises: {
-        lstat,
-        readdir: readdir$1,
-        readlink,
-        realpath,
+        lstat: promises.lstat,
+        readdir: promises.readdir,
+        readlink: promises.readlink,
+        realpath: promises.realpath,
     },
 };
 // if they just gave us require('fs') then use our default
-const fsFromOption = (fsOption) => !fsOption || fsOption === defaultFS || fsOption === actualFS ?
+const fsFromOption = (fsOption) => !fsOption || fsOption === defaultFS || fsOption === actualFS__namespace ?
     defaultFS
     : {
         ...defaultFS,
@@ -6460,7 +6481,7 @@ class PathWin32 extends PathBase {
      * @internal
      */
     getRootString(path) {
-        return win32.parse(path).root;
+        return node_path.win32.parse(path).root;
     }
     /**
      * @internal
@@ -6580,7 +6601,7 @@ class PathScurryBase {
     constructor(cwd = process.cwd(), pathImpl, sep, { nocase, childrenCacheSize = 16 * 1024, fs = defaultFS, } = {}) {
         this.#fs = fsFromOption(fs);
         if (cwd instanceof URL || cwd.startsWith('file://')) {
-            cwd = fileURLToPath(cwd);
+            cwd = node_url.fileURLToPath(cwd);
         }
         // resolve and split root, and then add to the store.
         // this is the only time we call path.resolve()
@@ -7168,7 +7189,7 @@ class PathScurryWin32 extends PathScurryBase {
     sep = '\\';
     constructor(cwd = process.cwd(), opts = {}) {
         const { nocase = true } = opts;
-        super(cwd, win32, '\\', { ...opts, nocase });
+        super(cwd, node_path.win32, '\\', { ...opts, nocase });
         this.nocase = nocase;
         for (let p = this.cwd; p; p = p.parent) {
             p.nocase = this.nocase;
@@ -7181,7 +7202,7 @@ class PathScurryWin32 extends PathScurryBase {
         // if the path starts with a single separator, it's not a UNC, and we'll
         // just get separator as the root, and driveFromUNC will return \
         // In that case, mount \ on the root from the cwd.
-        return win32.parse(dir).root.toUpperCase();
+        return node_path.win32.parse(dir).root.toUpperCase();
     }
     /**
      * @internal
@@ -7210,7 +7231,7 @@ class PathScurryPosix extends PathScurryBase {
     sep = '/';
     constructor(cwd = process.cwd(), opts = {}) {
         const { nocase = false } = opts;
-        super(cwd, posix, '/', { ...opts, nocase });
+        super(cwd, node_path.posix, '/', { ...opts, nocase });
         this.nocase = nocase;
     }
     /**
@@ -8332,7 +8353,7 @@ class Glob {
             this.cwd = '';
         }
         else if (opts.cwd instanceof URL || opts.cwd.startsWith('file://')) {
-            opts.cwd = fileURLToPath(opts.cwd);
+            opts.cwd = node_url.fileURLToPath(opts.cwd);
         }
         this.cwd = opts.cwd || '';
         this.root = opts.root;
@@ -8631,7 +8652,6 @@ function getFileAll(option, mdname) {
     result = result.flat();
     result = [...new Set(result)];
     result = result.sort((a, b) => compareNumbers(a, b));
-    console.log(result);
     return result;
   });
 }
@@ -8887,5 +8907,5 @@ function copyImageFilesAll(fileImagePath_1, writeIamagePath_1) {
   });
 }
 
-export { readCatalogue };
-//# sourceMappingURL=chunk-index-CVoGm9sd.esm.js.map
+exports.readCatalogue = readCatalogue;
+//# sourceMappingURL=chunk-index-BKM4lSNp.cjs.map

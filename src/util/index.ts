@@ -50,7 +50,6 @@ export async function getFileAll(
   result = result.flat();
   result = [...new Set(result)];
   result = result.sort((a, b) => compareNumbers(a, b));
-  console.log(result);
   return result;
 }
 
