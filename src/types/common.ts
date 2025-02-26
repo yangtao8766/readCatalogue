@@ -44,8 +44,8 @@ export type DefaultOption = {
 };
 
 export type ReadCatalogueType = (
-  findPosition: string,
-  writingPosition: string,
+  findPosition: string | string[],
+  writingPosition: string | string[],
   options?: Options
 ) => Promise<any>;
 

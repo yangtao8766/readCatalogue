@@ -80,7 +80,8 @@ export async function writeFileAll(
     }
   });
   await fs.promises.writeFile(writename, text);
-  console.log("write in  finish");
+
+  console.log("write file success");
 }
 
 /**

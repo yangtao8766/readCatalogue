@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const { readCatalogue } = require('../dist/common/chunk-index-BKM4lSNp.cjs');
-const path = require("path");
+import { readCatalogue } from "../dist/esm/chunk-index-C_XoNQG2.esm.js";
+import path from "path";
 
 const aegs = process.argv.slice(2);
 
@@ -11,48 +11,75 @@ if (aegs.length === 0) {
 }
 
 const extArray = [".md", ".js", ".ts", ".json"];
+const extObj = {
+  md: ".md",
+  js: ".js",
+  ts: ".ts",
+  json: ".json",
+};
+
 let ext, extIndex, excl, exclIndex;
 
-if (aegs.findIndex((item) => item === "--write" || item === "-w") === -1) {
-  console.log("请提供写入文件参数");
-  process.exit(1);
+function writeFindIndex() {
+  return aegs.findIndex((item) => item === "--write" || item === "-w");
 }
 
-if (aegs.findIndex((item) => item === "--ext" || item === "-e") === -1) {
-  extIndex = -1;
-} else {
-  extIndex = aegs.findIndex((item) => item === "--ext" || item === "-e") + 1;
+function extFindIndex() {
+  return aegs.findIndex((item) => item === "--ext" || item === "-e");
 }
 
-const writeIndex =
-  aegs.findIndex((item) => item === "--write" || item === "-w") + 1;
-
-if (aegs.findIndex((item) => item === "--excl") === -1) {
-  exclIndex = -1;
-} else {
-  exclIndex = aegs.findIndex((item) => item === "--excl") + 1;
+function exclFindIndex() {
+  return aegs.findIndex((item) => item === "--excl");
 }
 
-ext = aegs[extIndex] || ".md";
-excl = aegs[exclIndex] || null;
-
-if (!aegs[writeIndex]) {
+if (writeFindIndex() === -1) {
   console.log("请提供写入文件路径");
   process.exit(1);
 }
+
+const findPaths = aegs.slice(0, writeFindIndex());
+const writePaths = aegs.slice(writeFindIndex() + 1, exclFindIndex());
+
+if (extFindIndex() === -1) {
+  extIndex = -1;
+} else {
+  extIndex = extFindIndex() + 1;
+}
+
+if (exclFindIndex() === -1) {
+  exclIndex = -1;
+} else {
+  exclIndex = exclFindIndex() + 1;
+}
+
+ext = extObj[aegs[extIndex]] || ".md";
+excl = aegs[exclIndex] || null;
+
+if (!writePaths.length) {
+  console.log("请提供写入文件路径");
+  process.exit(1);
+}
+
 if (!extArray.includes(ext)) {
   console.log("请提供支持的文件后缀");
   process.exit(1);
 }
 
-const findPath = path.resolve(process.cwd(), aegs[0]);
-const writePath = path.resolve(process.cwd(), aegs[writeIndex]);
+if (findPaths.length !== writePaths.length) {
+  console.log("查找的文件数量必须和写入的文件数量不一致");
+  process.exit(1);
+}
 
 if (aegs.includes("--write") || aegs.includes("-w")) {
-  console.log("writing to file");
+  console.log("start writing file");
+  const findPath = findPaths.map((item) => path.resolve(process.cwd(), item));
+  const writePath = writePaths.map((item) => path.resolve(process.cwd(), item));
   readCatalogue(findPath, writePath, {
     ext,
     exclude: new RegExp(excl),
-  });
+  })
+    .then(() => {})
+    .catch((err) => {
+      console.log(err);
+    });
 }
-

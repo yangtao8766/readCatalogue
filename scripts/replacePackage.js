@@ -2,9 +2,9 @@ const fs = require("fs");
 const path = require("path");
 const { glob } = require("glob");
 
-const replaceArray = ["main", "module", "browser", "exports"];
-const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.cjs)/;
-const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.]+(?:\.esm\.js)/;
+const replaceArray = ["main", "module", "exports"];
+const mainReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.\_]+(?:\.cjs)/;
+const moduleReagex = /^.*[\\/]chunk-index-[a-zA-Z0-9\-\.\_]+(?:\.esm\.js)/;
 const requireReagex = /require\(["']([^"']+)["']\)/;
 function exportsReplace(exports, files) {
   for (const key in exports) {
@@ -51,12 +51,7 @@ function stringReplace(str, sourece, files) {
 
 async function writePackage(path, sourece) {
   const soureceMap = JSON.stringify(sourece, null, 2);
-  const newline = soureceMap.includes("\r\n") ? "\r\n" : "\n";
-  await fs.promises.writeFile(
-    path,
-    soureceMap.replace(/\r?\n/g, newline),
-    "utf-8"
-  );
+  await fs.promises.writeFile(path, soureceMap, "utf-8");
   console.log("package.json replace success");
 }
 

@@ -36,7 +36,7 @@ export type DefaultOption = {
     hierarchy: number;
     overlookFile: string;
 };
-export type ReadCatalogueType = (findPosition: string, writingPosition: string, options?: Options) => Promise<any>;
+export type ReadCatalogueType = (findPosition: string | string[], writingPosition: string | string[], options?: Options) => Promise<any>;
 export interface FileFunction {
     getContent: (isBuffer: boolean) => Promise<any>;
     getChildren: () => Promise<any[]>;

@@ -14,13 +14,11 @@ import type {
   ImageDefaultOption,
   FileImageExt,
 } from "./types/index";
-import { error } from "./error";
 import path from "path";
 import fs from "fs";
 
 let mdContent: string[] = [];
 const ASSETS = "assets";
-const STRING = "string";
 const enumImageArr: FileImageExt[] = [
   EnumFileImageExt.PNG,
   EnumFileImageExt.JPG,
@@ -29,53 +27,12 @@ const enumImageArr: FileImageExt[] = [
   EnumFileImageExt.SVG,
   EnumFileImageExt.WEBP,
 ];
-// 获取当前目录下的所有文件和文件夹
-export const readCatalogue: ReadCatalogueType = async (
-  findPosition,
-  writingPosition,
-  options = {}
-) => {
-  if (typeof findPosition !== STRING || typeof writingPosition !== STRING) {
-    error("type in not sting");
-    return;
-  }
-  const filename = findPosition;
-  const to = writingPosition;
 
-  const defaultOption: DefaultOption = {
-    regexp: options.exclude || null,
-    ext: options.ext || EnumFileTypes.JS,
-    sort: options.sort || false,
-    hierarchy: options.hierarchy || 5,
-    overlookFile: options.overlookFile || "node_modules",
-  };
-
-  const check = await checkFileExists(to);
-
-  mdContent = await getFileAll(
-    defaultOption,
-    path.join(filename, "/**").replace(/\\/g, "/")
-  );
-  if (!mdContent.length) {
-    return console.log("no file");
-  }
-
-  await handleFile(check, to);
-  copyImageFilesAll(filename, to);
-
-  const result = await createFile(mdContent);
-  const readFileContent = await readFile(result);
-  const file = await FileDir.getFile(to);
-  await writeFileAll(
-    readFileContent,
-    path.join(to, file.name + defaultOption.ext)
-  );
-};
-async function copyImageFilesAll(
+const copyImageFilesAll = async (
   fileImagePath: string,
   writeIamagePath: string,
   options: ImageOptions = {}
-) {
+) => {
   const defaultOption: ImageDefaultOption = {
     regexp: options.exclude || null,
     ext: enumImageArr,
@@ -104,4 +61,51 @@ async function copyImageFilesAll(
   });
 
   console.log("copyImageFilesAll success");
-}
+};
+
+const findFileAndWrite = async (
+  filename: string,
+  to: string,
+  options: DefaultOption
+) => {
+  const check = await checkFileExists(to);
+
+  mdContent = await getFileAll(
+    options,
+    path.join(filename, "/**").replace(/\\/g, "/")
+  );
+  if (!mdContent.length) {
+    return console.log("no file");
+  }
+
+  await handleFile(check, to);
+  await copyImageFilesAll(filename, to);
+
+  const result = await createFile(mdContent);
+  const readFileContent = await readFile(result);
+  const file = await FileDir.getFile(to);
+  await writeFileAll(readFileContent, path.join(to, file.name + options.ext));
+};
+
+// 获取当前目录下的所有文件和文件夹
+export const readCatalogue: ReadCatalogueType = async (
+  findPosition,
+  writingPosition,
+  options = {}
+) => {
+  findPosition = Array.isArray(findPosition) ? findPosition : [findPosition];
+  writingPosition = Array.isArray(writingPosition)
+    ? writingPosition
+    : [writingPosition];
+
+  const defaultOption: DefaultOption = {
+    regexp: options.exclude || null,
+    ext: options.ext || EnumFileTypes.JS,
+    sort: options.sort || false,
+    hierarchy: options.hierarchy || 5,
+    overlookFile: options.overlookFile || "node_modules",
+  };
+  for (let i = 0; i < findPosition.length; i++) {
+    await findFileAndWrite(findPosition[i], writingPosition[i], defaultOption);
+  }
+};
