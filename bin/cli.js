@@ -36,9 +36,10 @@ if (writeFindIndex() === -1) {
   console.log("请提供写入文件路径");
   process.exit(1);
 }
-
 const findPaths = aegs.slice(0, writeFindIndex());
-const writePaths = aegs.slice(writeFindIndex() + 1, exclFindIndex());
+const writePaths = aegs.slice(writeFindIndex() + 1, exclFindIndex()).length
+  ? aegs.slice(writeFindIndex() + 1, exclFindIndex())
+  : [aegs[aegs.length - 1]];
 
 if (extFindIndex() === -1) {
   extIndex = -1;
