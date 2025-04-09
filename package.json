@@ -1,6 +1,6 @@
 {
   "name": "read-catalogue",
-  "version": "1.0.25",
+  "version": "1.0.26",
   "description": "This is a tool that can read all the specified files in the directory",
   "type": "module",
   "main": "dist/common/chunk-index-DFWjWtmJ.cjs",
